@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Cake Topper Quiz</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .progress-bar {
+      transition: width 0.3s ease;
+    }
+    
+    .option-card {
+      transition: all 0.2s ease;
+    }
+    
+    .option-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.4s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="w-full h-full overflow-auto"></div>
+  <script>
+    const defaultConfig = {
+      background_color: "#fdf8f3",
+      surface_color: "#ffffff",
+      text_color: "#2d2d2d",
+      primary_action_color: "#d4a574",
+      secondary_action_color: "#e8d5c4",
+      font_family: "Playfair Display",
+      font_size: 16,
+      quiz_title: "Find Your Perfect Cake Topper",
+      quiz_subtitle: "Answer a few questions to discover which option suits your wedding vision",
+      ready_to_ship_title: "Ready to Ship",
+      made_to_order_title: "Made to Order",
+      curated_title: "Curated Arrangements",
+      fully_custom_title: "Fully Custom"
+    };
+
+    let config = {};
+    let currentQuestion = 0;
+    let answers = {};
+
+    const questions = [
+      {
+        id: 'timeline',
+        question: 'When is your wedding?',
+        options: [
+          { text: 'Less than 6 weeks away', value: 'urgent', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+          { text: '6-12 weeks away', value: 'soon', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 1 } },
+          { text: '3-6 months away', value: 'planning', scores: { readyToShip: 0, madeToOrder: 2, curated: 2, fullyCustom: 2 } },
+          { text: 'More than 6 months away', value: 'longterm', scores: { readyToShip: 0, madeToOrder: 1, curated: 1, fullyCustom: 3 } }
+        ]
+      },
+      {
+        id: 'experience',
+        question: 'What\'s your experience with cake decorating?',
+        options: [
+          { text: 'Professional cake decorator', value: 'pro', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 1 } },
+          { text: 'Amateur/hobbyist', value: 'amateur', scores: { readyToShip: 2, madeToOrder: 1, curated: 3, fullyCustom: 1 } },
+          { text: 'First-timer/ordering for someone else', value: 'novice', scores: { readyToShip: 2, madeToOrder: 0, curated: 3, fullyCustom: 1 } }
+        ]
+      },
+      {
+        id: 'customization',
+        question: 'How important is personalization?',
+        options: [
+          { text: 'Not important - I love ready-made designs', value: 'none', scores: { readyToShip: 3, madeToOrder: 1, curated: 1, fullyCustom: 0 } },
+          { text: 'Some color customization is enough', value: 'some', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 0 } },
+          { text: 'I want coordinated arrangements', value: 'moderate', scores: { readyToShip: 0, madeToOrder: 1, curated: 3, fullyCustom: 1 } },
+          { text: 'Fully bespoke and unique', value: 'high', scores: { readyToShip: 0, madeToOrder: 0, curated: 1, fullyCustom: 3 } }
+        ]
+      },
+      {
+        id: 'support',
+        question: 'What level of support do you need?',
+        options: [
+          { text: 'None - I\'ll figure it out', value: 'none', scores: { readyToShip: 3, madeToOrder: 1, curated: 0, fullyCustom: 0 } },
+          { text: 'Resource library & guides', value: 'guides', scores: { readyToShip: 0, madeToOrder: 3, curated: 2, fullyCustom: 1 } },
+          { text: 'High-touch support & consultation', value: 'hightouch', scores: { readyToShip: 0, madeToOrder: 0, curated: 1, fullyCustom: 3 } }
+        ]
+      },
+      {
+        id: 'budget',
+        question: 'What\'s your budget range?',
+        options: [
+          { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+          { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 0 } },
+          { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 2, fullyCustom: 3 } }
+        ]
+      }
+    ];
+
+    const results = {
+      readyToShip: {
+        icon: '📦',
+        description: 'Perfect for you! These beautiful toppers are in stock and ready to ship immediately. Browse our collection of pre-made designs that can arrive at your door in days.',
+        features: ['Ships within 1-2 business days', 'No minimum - flexible pricing', 'Beautiful pre-designed styles', 'Perfect for last-minute needs', 'No support needed - ready to use'],
+        upsell: '💡 Want extra support? Add access to our resource library for guidance and design tips!'
+      },
+      madeToOrder: {
+        icon: '✨',
+        description: 'Great choice! Individual made-to-order flowers perfect for professional cake decorators. Customize colors to match your vision. Minimum 6 weeks lead time required.',
+        features: ['Starting at $150', 'Minimum 6 weeks lead time', 'Color customization only', 'Ideal for cake decorating pros', 'Access to resource library & help docs'],
+        upsell: '💡 Want us to handle all the design work? Upgrade to Fully Custom and we\'ll create the perfect arrangement for you!'
+      },
+      curated: {
+        icon: '💐',
+        description: 'Excellent match! Pre-arranged flower combinations perfect for amateurs and first-timers. Beautifully coordinated designs that take the guesswork out of styling.',
+        features: ['Starting at $150-$500', 'Minimum 6 weeks lead time', 'Coordinated arrangements', 'Perfect for amateurs & lay people', 'Resource library & guides included']
+      },
+      fullyCustom: {
+        icon: '👑',
+        description: 'Perfect for your vision! Work directly with our designers to create a completely bespoke topper. High-touch support, rush options available, and white glove delivery.',
+        features: ['Starting at $500', 'Rush lead times available', 'Unlimited customization', 'High-touch support & consultation', 'White glove delivery option']
+      }
+    };
+
+    function calculateResult() {
+      const scores = {
+        readyToShip: 0,
+        madeToOrder: 0,
+        curated: 0,
+        fullyCustom: 0
+      };
+
+      Object.values(answers).forEach(answer => {
+        Object.keys(scores).forEach(key => {
+          scores[key] += answer.scores[key];
+        });
+      });
+
+      const maxScore = Math.max(...Object.values(scores));
+      const winner = Object.keys(scores).find(key => scores[key] === maxScore);
+      
+      return winner;
+    }
+
+    function renderQuiz() {
+      const app = document.getElementById('app');
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Georgia, serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      app.style.backgroundColor = backgroundColor;
+      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      app.style.color = textColor;
+
+      const progress = ((currentQuestion) / questions.length) * 100;
+
+      if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        app.innerHTML = `
+          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+            <div class="mb-8">
+              <div class="h-2 rounded-full mb-6" style="background-color: ${secondaryColor};">
+                <div class="progress-bar h-full rounded-full" style="width: ${progress}%; background-color: ${primaryColor};"></div>
+              </div>
+              <p class="text-center mb-2" style="font-size: ${baseSize * 0.875}px; color: ${textColor}; opacity: 0.7;">Question ${currentQuestion + 1} of ${questions.length}</p>
+              <h2 class="text-center mb-12" style="font-size: ${baseSize * 2}px; font-weight: 600; color: ${textColor};">${q.question}</h2>
+            </div>
+            
+            <div class="space-y-4">
+              ${q.options.map((option, index) => `
+                <button 
+                  class="option-card w-full p-6 rounded-lg text-left shadow-md"
+                  style="background-color: ${surfaceColor}; border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor};"
+                  onmouseover="this.style.borderColor='${primaryColor}'; this.style.backgroundColor='${secondaryColor}';"
+                  onmouseout="this.style.borderColor='${secondaryColor}'; this.style.backgroundColor='${surfaceColor}';"
+                  onclick="selectAnswer(${currentQuestion}, ${index})">
+                  ${option.text}
+                </button>
+              `).join('')}
+            </div>
+
+            ${currentQuestion > 0 ? `
+              <button 
+                class="mt-8 px-6 py-3 rounded-lg"
+                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.875}px;"
+                onmouseover="this.style.backgroundColor='${secondaryColor}';"
+                onmouseout="this.style.backgroundColor='transparent';"
+                onclick="goBack()">
+                ← Back
+              </button>
+            ` : ''}
+          </div>
+        `;
+      } else {
+        const resultKey = calculateResult();
+        const result = results[resultKey];
+        const titleMap = {
+          readyToShip: config.ready_to_ship_title || defaultConfig.ready_to_ship_title,
+          madeToOrder: config.made_to_order_title || defaultConfig.made_to_order_title,
+          curated: config.curated_title || defaultConfig.curated_title,
+          fullyCustom: config.fully_custom_title || defaultConfig.fully_custom_title
+        };
+
+        app.innerHTML = `
+          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+            <div class="text-center mb-12">
+              <div style="font-size: ${baseSize * 4}px;" class="mb-4">${result.icon}</div>
+              <h2 class="mb-4" style="font-size: ${baseSize * 2.5}px; font-weight: 600; color: ${textColor};">Your Perfect Match:</h2>
+              <h3 class="mb-6" style="font-size: ${baseSize * 1.75}px; color: ${primaryColor}; font-weight: 500;">${titleMap[resultKey]}</h3>
+              <p class="mb-8" style="font-size: ${baseSize * 1.125}px; line-height: 1.6; color: ${textColor};">${result.description}</p>
+            </div>
+
+            <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor};">
+              <h4 class="mb-4" style="font-size: ${baseSize * 1.25}px; font-weight: 600; color: ${textColor};">What's Included:</h4>
+              <ul class="space-y-3">
+                ${result.features.map(feature => `
+                  <li class="flex items-start" style="font-size: ${baseSize}px; color: ${textColor};">
+                    <span class="mr-3" style="color: ${primaryColor};">✓</span>
+                    <span>${feature}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            ${result.upsell ? `
+              <div class="rounded-lg p-6 mb-8" style="background-color: ${secondaryColor}; border-left: 4px solid ${primaryColor};">
+                <p style="font-size: ${baseSize}px; color: ${textColor}; line-height: 1.6;">${result.upsell}</p>
+              </div>
+            ` : ''}
+
+            <div class="text-center">
+              <button 
+                class="px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto"
+                style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.125}px;"
+                onmouseover="this.style.opacity='0.9';"
+                onmouseout="this.style.opacity='1';"
+                onclick="window.open('https://canva.com', '_blank', 'noopener,noreferrer')">
+                View ${titleMap[resultKey]} Options
+              </button>
+              <button 
+                class="block mx-auto px-6 py-3 rounded-lg"
+                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.875}px;"
+                onmouseover="this.style.backgroundColor='${secondaryColor}';"
+                onmouseout="this.style.backgroundColor='transparent';"
+                onclick="restartQuiz()">
+                Retake Quiz
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderIntro() {
+      const app = document.getElementById('app');
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Georgia, serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const quizTitle = config.quiz_title || defaultConfig.quiz_title;
+      const quizSubtitle = config.quiz_subtitle || defaultConfig.quiz_subtitle;
+
+      app.style.backgroundColor = backgroundColor;
+      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      app.style.color = textColor;
+
+      app.innerHTML = `
+        <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
+          <div class="text-center fade-in">
+            <div style="font-size: ${baseSize * 4}px;" class="mb-6">🎂</div>
+            <h1 class="mb-4" style="font-size: ${baseSize * 2.5}px; font-weight: 600; color: ${textColor};">${quizTitle}</h1>
+            <p class="mb-12 max-w-lg mx-auto" style="font-size: ${baseSize * 1.125}px; line-height: 1.6; color: ${textColor}; opacity: 0.8;">${quizSubtitle}</p>
+            
+            <button 
+              class="px-8 py-4 rounded-lg font-semibold"
+              style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.125}px;"
+              onmouseover="this.style.opacity='0.9';"
+              onmouseout="this.style.opacity='1';"
+              onclick="startQuiz()">
+              Start Quiz
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.selectAnswer = function(questionIndex, optionIndex) {
+      const question = questions[questionIndex];
+      answers[question.id] = question.options[optionIndex];
+      currentQuestion++;
+      renderQuiz();
+    };
+
+    window.goBack = function() {
+      currentQuestion--;
+      const prevQuestion = questions[currentQuestion];
+      delete answers[prevQuestion.id];
+      renderQuiz();
+    };
+
+    window.startQuiz = function() {
+      currentQuestion = 0;
+      renderQuiz();
+    };
+
+    window.restartQuiz = function() {
+      currentQuestion = 0;
+      answers = {};
+      renderIntro();
+    };
+
+    async function onConfigChange(newConfig) {
+      Object.assign(config, newConfig);
+      if (currentQuestion === 0 && Object.keys(answers).length === 0) {
+        renderIntro();
+      } else {
+        renderQuiz();
+      }
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (value) => {
+              cfg.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              cfg.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (value) => {
+              cfg.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              cfg.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              cfg.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => cfg.font_family || defaultConfig.font_family,
+          set: (value) => {
+            cfg.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => cfg.font_size || defaultConfig.font_size,
+          set: (value) => {
+            cfg.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['quiz_title', cfg.quiz_title || defaultConfig.quiz_title],
+        ['quiz_subtitle', cfg.quiz_subtitle || defaultConfig.quiz_subtitle],
+        ['ready_to_ship_title', cfg.ready_to_ship_title || defaultConfig.ready_to_ship_title],
+        ['made_to_order_title', cfg.made_to_order_title || defaultConfig.made_to_order_title],
+        ['curated_title', cfg.curated_title || defaultConfig.curated_title],
+        ['fully_custom_title', cfg.fully_custom_title || defaultConfig.fully_custom_title]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+      config = window.elementSdk.config;
+    }
+
+    renderIntro();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b53f658d51a4b0a',t:'MTc2Njk1NTM2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
