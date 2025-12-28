@@ -162,3 +162,33 @@ track("answer_selected", { questionId: question.id, answer: option.value });
 track("quiz_completed", { result: resultKey, scores });
 
 Then you can listen externally
+
+Email marketing: connect it after, not before
+
+Do not gate the quiz behind an email wall.
+
+That kills completion.
+
+Instead:
+	•	Let them finish the quiz
+	•	Show results
+	•	Then offer:
+“Want these links + next steps sent to your email?”
+
+This works better and feels respectful.
+
+What to send to email (automatically):
+	•	Their result
+	•	Links to the correct shop / page
+	•	One reassurance sentence
+	•	A soft CTA (not a pitch)
+
+Tagging (this is where it gets powerful):
+
+Apply tags like:
+	•	quiz_result_ready_to_ship
+	•	quiz_result_curated
+	•	quiz_result_fully_custom
+	•	role_pro
+	•	role_couple
+
