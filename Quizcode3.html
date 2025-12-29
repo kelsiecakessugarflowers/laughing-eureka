@@ -492,7 +492,16 @@
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
           : null;
 
+        const resultImages = {
+          readyToShip: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Quiz_results_imagwa_-_Ready_to_ship.jpg?v=1766983443',
+          madeToOrder: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Quiz_results_imagwa_-_Made_to_order.jpg?v=1766983443',
+          curated: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Quiz_results_imagwa_-_Bundles.jpg?v=1766983443',
+          fullyCustom: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Quiz_results_imagwa_-_Custom.jpg?v=1766983443'
+        };
+
         const placeholderImage = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'><rect width='1600' height='900' fill='%23F0E3E8'/><rect x='80' y='80' width='1440' height='740' fill='%23FEFDFD' stroke='%236B3D52' stroke-width='6' stroke-dasharray='18 18'/><text x='800' y='470' text-anchor='middle' font-family='Raleway, Arial, sans-serif' font-size='48' fill='%236B3D52'>Product photo placeholder</text><text x='800' y='540' text-anchor='middle' font-family='Raleway, Arial, sans-serif' font-size='32' fill='%235A524E'>Add your image for ${titleMap[resultKey]}</text></svg>`;
+
+        const resultImage = resultImages[resultKey] || placeholderImage;
 
         const summaryText = result.summary || result.description || '';
         const roleContext = getRoleBlurb(resultKey);
@@ -521,7 +530,7 @@
               </div>
 
               <div class="mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor}; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.08);">
-                <img src="${placeholderImage}" alt="Placeholder product image for ${titleMap[resultKey]}" style="width: 100%; height: auto; display: block;">
+                <img src="${resultImage}" alt="${titleMap[resultKey]} sugar flower collection" style="width: 100%; height: auto; display: block;">
               </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
@@ -639,8 +648,10 @@
       const baseFontStack = 'Georgia, serif';
       const baseSize = config.font_size || defaultConfig.font_size;
       const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
       const textColor = config.text_color || defaultConfig.text_color;
       const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
       const quizTitle = config.quiz_title || defaultConfig.quiz_title;
       const quizSubtitle = config.quiz_subtitle || defaultConfig.quiz_subtitle;
 
@@ -654,7 +665,9 @@
       app.innerHTML = `
         <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
           <div class="text-center fade-in">
-            <div style="font-size: ${baseSize * 4}px;" class="mb-6">🎂</div>
+            <div class="mb-8" style="border-radius: 16px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.14); border: 1px solid ${secondaryColor}; background-color: ${surfaceColor};">
+              <img src="https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Luxury_wedding_cake_featuring_custom_sugar_flower_design_-_whimsical_garden_wedding_with_gum_paste_flowers.png?v=1766949399" alt="Luxury wedding cake decorated with custom sugar flowers" style="width: 100%; height: auto; display: block;">
+            </div>
             <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}px; font-weight: 500; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
             <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
 
