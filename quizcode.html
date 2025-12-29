@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wedding Cake Topper Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap">
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -50,7 +54,7 @@
       text_color: "#2d2d2d",
       primary_action_color: "#d4a574",
       secondary_action_color: "#e8d5c4",
-      font_family: "Playfair Display",
+      font_family: "Raleway",
       font_size: 16,
       quiz_title: "Find Your Perfect Cake Topper",
       quiz_subtitle: "Answer a few questions to discover which option suits your wedding vision",
@@ -63,6 +67,18 @@
     let config = {};
     let currentQuestion = 0;
     let answers = {};
+    let hasTrackedResult = false;
+
+    function trackAnalytics(eventName, payload = {}) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, payload);
+        return;
+      }
+
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push({ event: eventName, ...payload });
+      }
+    }
 
     const questions = [
       {
@@ -162,7 +178,7 @@
     function renderQuiz() {
       const app = document.getElementById('app');
       const customFont = config.font_family || defaultConfig.font_family;
-      const baseFontStack = 'Georgia, serif';
+      const baseFontStack = '"Source Serif 4", Georgia, serif';
       const baseSize = config.font_size || defaultConfig.font_size;
       const backgroundColor = config.background_color || defaultConfig.background_color;
       const surfaceColor = config.surface_color || defaultConfig.surface_color;
@@ -216,6 +232,15 @@
       } else {
         const resultKey = calculateResult();
         const result = results[resultKey];
+        const analyticsLabel = `${resultKey}`;
+
+        if (!hasTrackedResult) {
+          trackAnalytics('quiz_result', {
+            event_category: 'quiz',
+            event_label: analyticsLabel
+          });
+          hasTrackedResult = true;
+        }
         const titleMap = {
           readyToShip: config.ready_to_ship_title || defaultConfig.ready_to_ship_title,
           madeToOrder: config.made_to_order_title || defaultConfig.made_to_order_title,
@@ -276,7 +301,7 @@
     function renderIntro() {
       const app = document.getElementById('app');
       const customFont = config.font_family || defaultConfig.font_family;
-      const baseFontStack = 'Georgia, serif';
+      const baseFontStack = '"Source Serif 4", Georgia, serif';
       const baseSize = config.font_size || defaultConfig.font_size;
       const backgroundColor = config.background_color || defaultConfig.background_color;
       const surfaceColor = config.surface_color || defaultConfig.surface_color;
@@ -325,12 +350,14 @@
 
     window.startQuiz = function() {
       currentQuestion = 0;
+      hasTrackedResult = false;
       renderQuiz();
     };
 
     window.restartQuiz = function() {
       currentQuestion = 0;
       answers = {};
+      hasTrackedResult = false;
       renderIntro();
     };
 
