@@ -92,16 +92,6 @@
 
     const questions = [
       {
-        id: 'role',
-        question: 'What\'s your role?',
-        options: [
-          { text: 'Baker/cake decorator (I\'m placing the flowers)', value: 'baker', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 2 } },
-          { text: 'Wedding vendor (planner, venue, florist, etc.)', value: 'vendor', scores: { readyToShip: 2, madeToOrder: 0, curated: 2, fullyCustom: 3 } },
-          { text: 'Person getting married', value: 'couple', scores: { readyToShip: 2, madeToOrder: 0, curated: 2, fullyCustom: 3 } },
-          { text: 'Family member helping', value: 'family', scores: { readyToShip: 2, madeToOrder: 0, curated: 3, fullyCustom: 2 } }
-        ]
-      },
-      {
         id: 'timeline',
         question: 'When is your wedding?',
         options: [
@@ -109,6 +99,16 @@
           { text: '6-12 weeks away', value: 'soon', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 1 } },
           { text: '3-6 months away', value: 'planning', scores: { readyToShip: 0, madeToOrder: 2, curated: 2, fullyCustom: 2 } },
           { text: 'More than 6 months away', value: 'longterm', scores: { readyToShip: 0, madeToOrder: 1, curated: 1, fullyCustom: 3 } }
+        ]
+      },
+            {
+        id: 'role',
+        question: 'What role best describes you?',
+        options: [
+          { text: 'Baker/cake decorator (I\'m placing the flowers)', value: 'baker', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 2 } },
+          { text: 'Wedding vendor (planner, venue, florist, etc.)', value: 'vendor', scores: { readyToShip: 2, madeToOrder: 0, curated: 2, fullyCustom: 3 } },
+          { text: 'Person getting married', value: 'couple', scores: { readyToShip: 2, madeToOrder: 0, curated: 2, fullyCustom: 3 } },
+          { text: 'Family member helping', value: 'family', scores: { readyToShip: 2, madeToOrder: 0, curated: 3, fullyCustom: 2 } }
         ]
       },
       {
