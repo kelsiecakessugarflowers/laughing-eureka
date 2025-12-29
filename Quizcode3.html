@@ -202,7 +202,7 @@
         summary: 'Collaborative design experience to build a one-of-a-kind floral cake centerpiece.',
         bestFor: 'Couples and vendors who want signature details and white-glove support.',
         features: [
-          'Lead time: Rush options available with booking',
+          'Lead time: typically couples book this 3-6 months before the wedding but rush options are available exclusively for custom designs',
           'Customization: Unlimited design and palette control',
           'Support: High-touch collaboration and consultation',
           "Durability: Ships safely and stays pristine for your event",
@@ -487,6 +487,8 @@
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
           : null;
 
+        const placeholderImage = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'><rect width='1600' height='900' fill='%23F0E3E8'/><rect x='80' y='80' width='1440' height='740' fill='%23FEFDFD' stroke='%236B3D52' stroke-width='6' stroke-dasharray='18 18'/><text x='800' y='470' text-anchor='middle' font-family='Raleway, Arial, sans-serif' font-size='48' fill='%236B3D52'>Product photo placeholder</text><text x='800' y='540' text-anchor='middle' font-family='Raleway, Arial, sans-serif' font-size='32' fill='%235A524E'>Add your image for ${titleMap[resultKey]}</text></svg>`;
+
         const summaryText = result.summary || result.description || '';
         const roleContext = getRoleBlurb(resultKey);
         const bestForText = result.bestFor
@@ -511,6 +513,10 @@
                 </div>
                 <p class="body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.55; color: ${textColor}; font-weight: 400; max-width: 50ch;">${summaryText}</p>
                 <p class="body-font mt-3" style="font-size: ${baseSize * 0.98}px; color: ${deepAccentColor}; font-weight: 600; letter-spacing: 0.01em;">Best for: <span style="color: ${textColor}; font-weight: 400;">${bestForText}</span></p>
+              </div>
+
+              <div class="mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor}; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.08);">
+                <img src="${placeholderImage}" alt="Placeholder product image for ${titleMap[resultKey]}" style="width: 100%; height: auto; display: block;">
               </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
@@ -542,7 +548,7 @@
               ${secondaryCta ? `
                 <button
                   class="secondary-cta-btn px-6 py-3 rounded-lg font-semibold mb-2 w-full sm:w-auto body-font"
-                  style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.98}px;"
+                  style="background-color: ${secondaryColor}; color: ${deepAccentColor}; border: 1px solid ${primaryColor}; font-size: ${baseSize * 0.98}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.12);"
                   onclick="window.open('${secondaryCta.href}', '_blank', 'noopener,noreferrer')">
                   ${secondaryCta.label}
                 </button>
@@ -597,9 +603,11 @@
         });
 
         addHoverListeners(app, '.secondary-cta-btn', (button) => {
-          button.style.backgroundColor = secondaryColor;
+          button.style.backgroundColor = accentColor;
+          button.style.color = '#ffffff';
         }, (button) => {
-          button.style.backgroundColor = 'transparent';
+          button.style.backgroundColor = secondaryColor;
+          button.style.color = deepAccentColor;
         });
 
         const emailSubmitButton = app.querySelector('#email-submit-btn');
