@@ -56,7 +56,7 @@
   <div id="app" class="w-full h-full overflow-auto"></div>
   <script>
     const defaultConfig = {
-      background_color: "#F5EFE9",
+      background_color: "#FDFBF9",
       surface_color: "#FEFDFD",
       text_color: "#2D1A22",
       primary_action_color: "#6B3D52",
@@ -172,9 +172,9 @@
       },
       curated: {
         icon: '💐',
-        description: 'Excellent match! Pre-arranged flower combinations perfect for amateurs and first-timers. Beautifully coordinated designs that take the guesswork out of styling.',
+        description: 'Excellent match! Pre-arranged flower combinations that take the guesswork out of your wedding cake design. Find the perfect curated set to bring your floral wedding cake to life!',
         durability: 'Doesn\'t wilt, bruise, or expire — stays beautiful from delivery to your big day.',
-        clarifier: 'Best if you want a beautiful, cohesive look without having to design it yourself.',
+        clarifier: 'Best if you want a pulled-together look without building the entire design from scratch.',
         features: ['Order minimum: $150', 'Minimum 6 weeks lead time', 'Pre-arranged, coordinated designs', 'Optional guides included', 'Great if you want “done-for-you” styling'],
         nextStep: 'These take the guesswork out and still feel custom.',
         emailContent: {
@@ -185,15 +185,15 @@
       },
       fullyCustom: {
         icon: '✨',
-        description: 'Perfect for your vision! Work directly with our designers to create a completely bespoke topper. High-touch support, rush options available, and white glove delivery.',
+        description: 'Perfect for your unique wedding vision. Work with Kelsie to create a one-of-a-kind floral cake design.',
         durability: 'Built to last — doesn\'t wilt or bruise, and ships safely no matter the distance.',
         clarifier: 'Best for couples and their vendors who are early in planning and want a collaborative design process.',
         features: ['Minimum: $500', 'Rush options available', 'Unlimited customization', 'High-touch support & consultation', 'White glove delivery option'],
         nextStep: 'This starts with a design conversation before anything is made.',
         emailContent: {
           shopLink: 'https://kelsiecakes.com/fully-custom',
-          reassurance: 'We\'ll work with you one-on-one to design something completely unique for your celebration.',
-          cta: 'Schedule a consultation to start designing your fully custom cake topper.'
+          reassurance: 'We’ll design something unique together, with clear next steps and a timeline that matches your date.',
+          cta: 'Schedule a consultation and we’ll start designing your custom topper.'
         }
       }
     };
@@ -233,15 +233,23 @@
         return "fullyCustom";
       }
 
-      // 3) Only bakers can get MTO individual flowers
-      // If result would be madeToOrder but role isn't baker, reroute
-      // (Where do they go instead? Curated if they want “done-for-you,” or Custom if they want unique.)
       const pickFromScores = (allowedKeys) => {
         const maxScore = Math.max(...allowedKeys.map(k => scores[k]));
         const winners = allowedKeys.filter(k => scores[k] === maxScore);
         const priority = ["fullyCustom", "curated", "madeToOrder", "readyToShip"];
         return priority.find(k => winners.includes(k)) || winners[0];
       };
+
+      // Guardrail: if they say “existing designs,” don’t send them to Fully Custom
+      if (customization === "existing") {
+        // if urgent, RTS already returned above
+        if (role !== "baker") return pickFromScores(["readyToShip", "curated"]);
+        return pickFromScores(["readyToShip", "madeToOrder", "curated"]);
+      }
+
+      // 3) Only bakers can get MTO individual flowers
+      // If result would be madeToOrder but role isn't baker, reroute
+      // (Where do they go instead? Curated if they want “done-for-you,” or Custom if they want unique.)
 
       // If not a baker, remove madeToOrder from the pool
       if (role !== "baker") {
@@ -283,16 +291,21 @@
       return (blurbs[role] && blurbs[role][resultKey]) || blurbs.couple[resultKey] || "";
     }
 
-    function getRoleTags() {
+    function getSegmentationTags(resultKey) {
       const tags = [];
-      
-      // Role tags based on experience
-      if (answers.experience?.value === 'pro') {
-        tags.push('role_pro');
-      } else if (answers.experience?.value === 'amateur' || answers.experience?.value === 'novice') {
-        tags.push('role_couple');
-      }
-      
+
+      // Role (real role)
+      if (answers.role?.value) tags.push(`role_${answers.role.value}`);
+      // experience (real experience)
+      if (answers.experience?.value) tags.push(`experience_${answers.experience.value}`);
+      // timeline/customization/budget (super useful for email paths)
+      if (answers.timeline?.value) tags.push(`timeline_${answers.timeline.value}`);
+      if (answers.customization?.value) tags.push(`customization_${answers.customization.value}`);
+      if (answers.budget?.value) tags.push(`budget_${answers.budget.value}`);
+
+      // Result
+      tags.push(`quiz_result_${resultKey}`);
+
       return tags;
     }
 
@@ -315,13 +328,7 @@
       submitButton.textContent = 'Sending...';
 
       const resultKey = calculateResult();
-      const roleTags = getRoleTags();
-      
-      // Tags to apply
-      const tags = [
-        `quiz_result_${resultKey}`,
-        ...roleTags
-      ];
+      const tags = getSegmentationTags(resultKey);
 
       const submission = {
         email: email,
@@ -352,6 +359,14 @@
         submitButton.style.opacity = '1';
         submitButton.textContent = config.email_button_text || defaultConfig.email_button_text;
       }
+    }
+
+    function addHoverListeners(container, selector, onEnter, onLeave) {
+      const elements = container.querySelectorAll(selector);
+      elements.forEach(element => {
+        element.addEventListener('mouseenter', () => onEnter(element));
+        element.addEventListener('mouseleave', () => onLeave(element));
+      });
     }
 
     function renderQuiz() {
@@ -397,8 +412,6 @@
                 <button
                   class="option-card w-full p-6 rounded-lg text-left shadow-sm body-font"
                   style="background-color: ${surfaceColor}; border: 2px solid ${softHighlight}; font-size: ${optionTextSize}px; color: ${textColor}; font-weight: 500;"
-                  onmouseover="this.style.borderColor='${primaryColor}'; this.style.backgroundColor='${secondaryColor}';"
-                  onmouseout="this.style.borderColor='${softHighlight}'; this.style.backgroundColor='${surfaceColor}';"
                   onclick="selectAnswer(${currentQuestion}, ${index})">
                   ${option.text}
                 </button>
@@ -407,16 +420,28 @@
 
             ${currentQuestion > 0 ? `
               <button
-                class="mt-8 px-6 py-3 rounded-lg body-font"
+                class="nav-back-btn mt-8 px-6 py-3 rounded-lg body-font"
                 style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${helperTextSize}px; font-weight: 500;"
-                onmouseover="this.style.backgroundColor='${secondaryColor}';"
-                onmouseout="this.style.backgroundColor='transparent';"
                 onclick="goBack()">
                 ← Back
               </button>
             ` : ''}
           </div>
         `;
+
+        addHoverListeners(app, '.option-card', (button) => {
+          button.style.borderColor = primaryColor;
+          button.style.backgroundColor = secondaryColor;
+        }, (button) => {
+          button.style.borderColor = softHighlight;
+          button.style.backgroundColor = surfaceColor;
+        });
+
+        addHoverListeners(app, '.nav-back-btn', (button) => {
+          button.style.backgroundColor = secondaryColor;
+        }, (button) => {
+          button.style.backgroundColor = 'transparent';
+        });
       } else {
         const resultKey = calculateResult();
         const result = results[resultKey];
@@ -474,20 +499,19 @@
             <div class="text-center mb-8">
               <p class="mb-6 body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.4; color: ${textColor}; font-weight: 500;">${result.nextStep}</p>
               <button
-                class="px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
+                class="primary-cta-btn px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-                onmouseover="this.style.opacity='0.9';"
-                onmouseout="this.style.opacity='1';"
                 onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
                 View ${titleMap[resultKey]} Options
               </button>
             </div>
 
-            <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${primaryColor};">
-              <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 500; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
-              <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.9}px; color: ${mutedColor}; opacity: 0.9; line-height: 1.4;">We'll send you personalized links, reassurance about your choice, and helpful next steps.</p>
+              <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${primaryColor};">
+                <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 500; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
+                <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.9}px; color: ${mutedColor}; opacity: 0.9; line-height: 1.4;">We'll send you personalized links, reassurance about your choice, and helpful next steps.</p>
+                <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.88}px; color: ${mutedColor}; opacity: 0.85; line-height: 1.4;">I’ll send your results + helpful tips. Unsubscribe anytime.</p>
 
-              <form onsubmit="handleEmailSubmit(event)" class="max-w-md mx-auto">
+                <form onsubmit="handleEmailSubmit(event)" class="max-w-md mx-auto">
                 <div class="mb-4">
                   <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">Email Address</label>
                   <input
@@ -505,30 +529,49 @@
                   id="email-submit-btn"
                   class="w-full px-8 py-3 rounded-lg font-semibold body-font"
                   style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-                  onmouseover="if(!this.disabled) this.style.opacity='0.9';"
-                  onmouseout="if(!this.disabled) this.style.opacity='1';">
+                  >
                   ${config.email_button_text || defaultConfig.email_button_text}
                 </button>
                 <div id="email-message" class="mt-4"></div>
               </form>
 
               <p class="mt-6 text-center body-font" style="font-size: ${baseSize * 0.82}px; color: ${mutedColor}; opacity: 0.7;">
-                Tags applied: quiz_result_${resultKey}${getRoleTags().length > 0 ? ', ' + getRoleTags().join(', ') : ''}
+                Tags applied: ${getSegmentationTags(resultKey).join(', ')}
               </p>
             </div>
 
             <div class="text-center">
               <button
-                class="px-6 py-3 rounded-lg body-font"
+                class="retake-btn px-6 py-3 rounded-lg body-font"
                 style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${helperTextSize}px; font-weight: 400;"
-                onmouseover="this.style.backgroundColor='${secondaryColor}';"
-                onmouseout="this.style.backgroundColor='transparent';"
                 onclick="restartQuiz()">
                 Retake Quiz
               </button>
             </div>
           </div>
         `;
+
+        addHoverListeners(app, '.primary-cta-btn', (button) => {
+          button.style.opacity = '0.9';
+        }, (button) => {
+          button.style.opacity = '1';
+        });
+
+        const emailSubmitButton = app.querySelector('#email-submit-btn');
+        if (emailSubmitButton) {
+          emailSubmitButton.addEventListener('mouseenter', () => {
+            if (!emailSubmitButton.disabled) emailSubmitButton.style.opacity = '0.9';
+          });
+          emailSubmitButton.addEventListener('mouseleave', () => {
+            if (!emailSubmitButton.disabled) emailSubmitButton.style.opacity = '1';
+          });
+        }
+
+        addHoverListeners(app, '.retake-btn', (button) => {
+          button.style.backgroundColor = secondaryColor;
+        }, (button) => {
+          button.style.backgroundColor = 'transparent';
+        });
       }
     }
 
@@ -558,20 +601,33 @@
             <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
 
             <button
-              class="px-8 py-4 rounded-lg font-semibold body-font"
+              class="start-btn px-8 py-4 rounded-lg font-semibold body-font"
               style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-              onmouseover="this.style.opacity='0.9';"
-              onmouseout="this.style.opacity='1';"
               onclick="startQuiz()">
               Start Quiz
             </button>
           </div>
         </div>
       `;
+
+      const startButton = app.querySelector('.start-btn');
+      if (startButton) {
+        startButton.addEventListener('mouseenter', () => {
+          startButton.style.opacity = '0.9';
+        });
+        startButton.addEventListener('mouseleave', () => {
+          startButton.style.opacity = '1';
+        });
+      }
     }
 
     window.selectAnswer = function(questionIndex, optionIndex) {
       const question = questions[questionIndex];
+      trackAnalytics('quiz_answer', {
+        event_category: 'quiz',
+        question_id: question.id,
+        answer_value: question.options[optionIndex].value
+      });
       answers[question.id] = question.options[optionIndex];
       currentQuestion++;
       renderQuiz();
