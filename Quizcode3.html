@@ -26,7 +26,25 @@
     .option-card:hover {
       transform: translateY(-2px);
     }
-    
+
+    .option-card.selected {
+      border-color: #D4A574;
+      background-color: #FAF7F4;
+      box-shadow: 0 10px 24px rgba(73, 44, 56, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .option-card:focus-visible {
+      outline: 3px solid #D4A574;
+      outline-offset: 2px;
+    }
+
+    .option-card[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     .fade-in {
       animation: fadeIn 0.4s ease-in;
     }
@@ -433,12 +451,12 @@
               <h2 class="text-center mb-12 heading-font" style="font-size: ${questionHeadingSize}px; font-weight: 600; color: ${textColor};">${q.question}</h2>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-4 option-card-list">
               ${q.options.map((option, index) => `
                 <button
                   class="option-card w-full p-6 rounded-lg text-left shadow-sm body-font"
                   style="background-color: ${surfaceColor}; border: 2px solid ${softHighlight}; font-size: ${optionTextSize}px; color: ${textColor}; font-weight: 500;"
-                  onclick="selectAnswer(${currentQuestion}, ${index})">
+                  onclick="selectAnswer(${currentQuestion}, ${index}, event, this)">
                   ${option.text}
                 </button>
               `).join('')}
@@ -700,16 +718,31 @@
       }
     }
 
-    window.selectAnswer = function(questionIndex, optionIndex) {
+    window.selectAnswer = function(questionIndex, optionIndex, event, buttonElement) {
       const question = questions[questionIndex];
+      const optionButtons = buttonElement?.closest('.option-card-list')?.querySelectorAll('.option-card') || [];
+
+      optionButtons.forEach((btn) => {
+        btn.disabled = true;
+        btn.classList.remove('selected');
+      });
+
+      if (buttonElement) {
+        buttonElement.classList.add('selected');
+      }
+
       trackAnalytics('quiz_answer', {
         event_category: 'quiz',
         question_id: question.id,
         answer_value: question.options[optionIndex].value
       });
+
       answers[question.id] = question.options[optionIndex];
-      currentQuestion++;
-      renderQuiz();
+
+      setTimeout(() => {
+        currentQuestion++;
+        renderQuiz();
+      }, 220);
     };
 
     window.goBack = function() {
