@@ -263,23 +263,32 @@
       const timeline = answers.timeline?.value; // urgent | soon | planning | longterm
       const customization = answers.customization?.value; // custom | existing | adjusted
       const budget = answers.budget?.value; // low | medium | high | premium | unsure
+      const budgetAllowsFullyCustom = budget === "high" || budget === "premium";
+
+      if (budget === "low") return "readyToShip";
 
       // 1) If urgent: RTS ONLY (your existing rule)
       if (timeline === "urgent") return "readyToShip";
 
-      if (customization === "custom" && timeline === "soon") {
+      if (customization === "custom" && timeline === "soon" && budgetAllowsFullyCustom) {
         return "fullyCustom";
       }
 
       // 2) High budget + short timeline => allow last-minute ONLY if CUSTOM
       // (so: if they have money and time is tight, route them to Custom, not Curated/MTO)
-      if ((budget === "high" || budget === "premium") && timeline === "soon" && customization !== "existing") {
+      if (budgetAllowsFullyCustom && timeline === "soon" && customization !== "existing") {
         return "fullyCustom";
       }
 
+      const allowedResults = ["readyToShip", "madeToOrder", "curated", "fullyCustom"].filter(result => {
+        if (result === "fullyCustom") return budgetAllowsFullyCustom;
+        return true;
+      });
+
       const pickFromScores = (allowedKeys) => {
-        const maxScore = Math.max(...allowedKeys.map(k => scores[k]));
-        const winners = allowedKeys.filter(k => scores[k] === maxScore);
+        const filteredKeys = allowedKeys.filter(k => allowedResults.includes(k));
+        const maxScore = Math.max(...filteredKeys.map(k => scores[k]));
+        const winners = filteredKeys.filter(k => scores[k] === maxScore);
         const priority = ["fullyCustom", "curated", "madeToOrder", "readyToShip"];
         return priority.find(k => winners.includes(k)) || winners[0];
       };
