@@ -144,11 +144,16 @@
     const results = {
       readyToShip: {
         icon: '📦',
-        description: 'Perfect for you! These beautiful toppers are in stock and ready to ship immediately. Browse our collection of pre-made designs that can arrive at your door in days.',
-        durability: 'Designed to ship safely and never wilt, bruise, or expire.',
-        clarifier: 'Best if you want something beautiful fast — no customization, no waiting.',
-        features: ['Ships within 1-2 business days', 'No order minimum', 'Pre-designed styles (no customization)', 'Quick-start placement tips included', 'Perfect for last-minute needs'],
-        upsell: '💡 Want extra support? Add access to our resource library for guidance and design tips!',
+        summary: 'In-stock toppers that arrive in days so you can finish your cake without waiting.',
+        bestFor: 'Fast timelines and anyone who wants something beautiful without customization.',
+        features: [
+          'Ships in 1-2 business days (in stock)',
+          'Customization: Pre-designed styles with no changes needed',
+          'Support: Quick-start placement tips included',
+          "Durability: Sugar flowers stay pristine — they won't wilt",
+          'No order minimums — great for small cakes'
+        ],
+        upsell: '💡 Want extra support styling your cake? Add the <a href="https://thevault.kelsiecakes.com/products/courses/view/1185413" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Styling Toolkit</a> for design tips and templates.',
         nextStep: 'These are in stock and ship fast — perfect if your date is coming up soon.',
         emailContent: {
           shopLink: 'https://sugarflowersonline.com/collections/all',
@@ -158,11 +163,16 @@
       },
       madeToOrder: {
         icon: '🌺',
-        description: 'Great choice! Individual made-to-order flowers perfect for professional cake decorators. Customize colors to match your vision. Minimum 6 weeks lead time required.',
-        durability: 'Made well in advance so they\'re ready when you need them.',
-        clarifier: 'Best if you already know what flowers you want and just need them made in your colors.',
-        features: ['Order minimum: $150', 'Minimum 6 weeks lead time', 'Color customization only', 'For cake decorators placing the flowers', 'Optional guides included'],
-        upsell: '💡 Want us to handle all the design work? Upgrade to Fully Custom and we\'ll create the perfect arrangement for you!',
+        summary: 'Custom-colored individual flowers made for pros who already know the blooms they need.',
+        bestFor: 'Bakers who want their chosen flowers in exact colors with a planned lead time.',
+        features: [
+          'Lead time: Minimum 6 weeks, made fresh for your order',
+          'Customization: Choose the flower types and colors you need',
+          'Support: Optional guides for pro placement',
+          "Durability: Made well in advance so they're ready when you are",
+          'Order minimum: $150'
+        ],
+        upsell: '💡 Want hands-on styling guidance? Add the <a href="https://thevault.kelsiecakes.com/products/courses/view/1185413" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Styling Toolkit</a> for layout tips and checklists.',
         nextStep: 'Choose your flowers and colors, and we\'ll make them to order for you.',
         emailContent: {
           shopLink: 'https://kelsiecakes.com/shop-all/',
@@ -172,10 +182,15 @@
       },
       curated: {
         icon: '💐',
-        description: 'Excellent match! Pre-arranged flower combinations that take the guesswork out of your wedding cake design. Find the perfect curated set to bring your floral wedding cake to life!',
-        durability: 'Doesn\'t wilt, bruise, or expire — stays beautiful from delivery to your big day.',
-        clarifier: 'Best if you want a pulled-together look without building the entire design from scratch.',
-        features: ['Order minimum: $150', 'Minimum 6 weeks lead time', 'Pre-arranged, coordinated designs', 'Optional guides included', 'Great if you want “done-for-you” styling'],
+        summary: 'Coordinated flower sets that deliver a styled, done-for-you look for your cake.',
+        bestFor: 'Couples or helpers who want a polished design without planning every stem.',
+        features: [
+          'Lead time: Minimum 6 weeks for arranged sets',
+          'Customization: Curated designs with light tweaks available',
+          'Support: Styling guidance and placement tips on request',
+          "Durability: Won't wilt, bruise, or expire",
+          'Order minimum: $150'
+        ],
         nextStep: 'These take the guesswork out and still feel custom.',
         emailContent: {
           shopLink: 'https://kelsiecakes.com/bundles/',
@@ -185,10 +200,15 @@
       },
       fullyCustom: {
         icon: '✨',
-        description: 'Perfect for your unique wedding vision. Work with Kelsie to create a one-of-a-kind floral cake design.',
-        durability: 'Built to last — doesn\'t wilt or bruise, and ships safely no matter the distance.',
-        clarifier: 'Best for couples and their vendors who are early in planning and want a collaborative design process.',
-        features: ['Minimum: $500', 'Rush options available', 'Unlimited customization', 'High-touch support & consultation', 'White glove delivery option'],
+        summary: 'Collaborative design experience to build a one-of-a-kind floral cake centerpiece.',
+        bestFor: 'Couples and vendors who want signature details and white-glove support.',
+        features: [
+          'Lead time: Rush options available with booking',
+          'Customization: Unlimited design and palette control',
+          'Support: High-touch collaboration and consultation',
+          "Durability: Ships safely and stays pristine for your event",
+          'Minimum: $500 with white-glove delivery options'
+        ],
         nextStep: 'Start with the inquiry form so I can check availability for your event date before we dive into design details.',
         emailContent: {
           shopLink: 'https://kelsiecakes.com/inquire-here',
@@ -468,23 +488,31 @@
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
           : null;
 
+        const summaryText = result.summary || result.description || '';
+        const roleContext = getRoleBlurb(resultKey);
+        const bestForText = result.bestFor
+          ? `${result.bestFor}${roleContext ? ' — ' + roleContext : ''}`
+          : result.clarifier || roleContext || '';
+
         app.innerHTML = `
           <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
-              <div class="text-center mb-12">
-                <div style="font-size: ${baseSize * 3.75}px;" class="mb-4">${result.icon}</div>
-                <h2 class="mb-3 heading-font" style="font-size: ${baseSize * 2.25}px; font-weight: 400; color: ${textColor};">Your Perfect Match:</h2>
-                <h3 class="mb-6 heading-font" style="font-size: ${baseSize * 1.95}px; color: ${primaryColor}; font-weight: 500; letter-spacing: 0.01em;">${titleMap[resultKey]}</h3>
-                <p class="mb-4 body-font" style="font-size: ${baseSize * 1.12}px; line-height: 1.65; color: ${textColor}; font-weight: 300;">${result.description}</p>
-                <p class="mb-6 body-font" style="font-size: ${baseSize * 1.02}px; line-height: 1.6; color: ${textColor}; font-weight: 400;">
-                  ${getRoleBlurb(resultKey)}
-                </p>
-                ${result.durability ? `
-                  <p class="mb-6 body-font" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${deepAccentColor}; opacity: 0.9; font-weight: 500;">${result.durability}</p>
-                ` : ''}
-                ${result.clarifier ? `
-                  <p class="mb-8 body-font italic" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${textColor}; opacity: 0.9; font-weight: 300;">${result.clarifier}</p>
-              ` : ''}
-            </div>
+              <div class="mb-10 text-left">
+                <div class="flex items-center gap-4 mb-4">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-full" style="background-color: ${softHighlight}; color: ${primaryColor}; font-size: ${baseSize * 1.4}px;">
+                    ${result.icon}
+                  </div>
+                  <div>
+                    <p class="body-font" style="font-size: ${helperTextSize}px; color: ${mutedColor}; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Your perfect match</p>
+                    <h3 class="heading-font inline-flex" style="font-size: ${baseSize * 2}px; font-weight: 600; color: ${primaryColor}; line-height: 1.2;">
+                      <span style="background-color: ${softHighlight}; border: 1px solid ${secondaryColor}; padding: 10px 12px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px;">
+                        <span style="color: ${deepAccentColor}; font-weight: 700; font-size: ${baseSize * 0.95}px; letter-spacing: 0.03em;">${titleMap[resultKey]}</span>
+                      </span>
+                    </h3>
+                  </div>
+                </div>
+                <p class="body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.55; color: ${textColor}; font-weight: 400; max-width: 50ch;">${summaryText}</p>
+                <p class="body-font mt-3" style="font-size: ${baseSize * 0.98}px; color: ${deepAccentColor}; font-weight: 600; letter-spacing: 0.01em;">Best for: <span style="color: ${textColor}; font-weight: 400;">${bestForText}</span></p>
+              </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
               <h4 class="mb-4 heading-font" style="font-size: ${baseSize * 1.4}px; font-weight: 500; color: ${textColor};">What's Included:</h4>
