@@ -157,7 +157,7 @@
         }
       },
       madeToOrder: {
-        icon: '✨',
+        icon: '🌺',
         description: 'Great choice! Individual made-to-order flowers perfect for professional cake decorators. Customize colors to match your vision. Minimum 6 weeks lead time required.',
         durability: 'Made well in advance so they\'re ready when you need them.',
         clarifier: 'Best if you already know what flowers you want and just need them made in your colors.',
@@ -340,7 +340,7 @@
       if (createResult.isOk) {
         messageDiv.innerHTML = `
           <div class="body-font" style="color: #38a169; font-size: 14px; line-height: 1.5;">
-            <p style="font-weight: 500; margin-bottom: 8px;">✓ Success! Check your email.</p>
+            <p style="font-weight: 300; margin-bottom: 8px;">✓ Success! Check your email.</p>
             <p style="font-size: 13px; opacity: 0.9;">We've sent your ${results[resultKey].emailContent ? 'personalized results' : 'results'} and next steps.</p>
           </div>
         `;
@@ -367,7 +367,7 @@
       const accentColor = "#D4A574";
       const deepAccentColor = "#492C38";
       const mutedColor = "#5A524E";
-      const softHighlight = "#EDE5DF";
+      const softHighlight = "#FAF7F4";
 
       const questionNumberSize = baseSize * 0.95;
       const questionHeadingSize = baseSize * 2.35;
@@ -439,25 +439,25 @@
           <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
               <div class="text-center mb-12">
                 <div style="font-size: ${baseSize * 3.75}px;" class="mb-4">${result.icon}</div>
-                <h2 class="mb-3 heading-font" style="font-size: ${baseSize * 2.25}px; font-weight: 600; color: ${textColor};">Your Perfect Match:</h2>
-                <h3 class="mb-6 heading-font" style="font-size: ${baseSize * 1.95}px; color: ${primaryColor}; font-weight: 650; letter-spacing: 0.01em;">${titleMap[resultKey]}</h3>
-                <p class="mb-4 body-font" style="font-size: ${baseSize * 1.12}px; line-height: 1.65; color: ${textColor}; font-weight: 400;">${result.description}</p>
-                <p class="mb-6 body-font" style="font-size: ${baseSize * 1.02}px; line-height: 1.6; color: ${textColor}; font-weight: 500;">
+                <h2 class="mb-3 heading-font" style="font-size: ${baseSize * 2.25}px; font-weight: 400; color: ${textColor};">Your Perfect Match:</h2>
+                <h3 class="mb-6 heading-font" style="font-size: ${baseSize * 1.95}px; color: ${primaryColor}; font-weight: 500; letter-spacing: 0.01em;">${titleMap[resultKey]}</h3>
+                <p class="mb-4 body-font" style="font-size: ${baseSize * 1.12}px; line-height: 1.65; color: ${textColor}; font-weight: 300;">${result.description}</p>
+                <p class="mb-6 body-font" style="font-size: ${baseSize * 1.02}px; line-height: 1.6; color: ${textColor}; font-weight: 400;">
                   ${getRoleBlurb(resultKey)}
                 </p>
                 ${result.durability ? `
-                  <p class="mb-6 body-font" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${deepAccentColor}; opacity: 0.9; font-weight: 600;">${result.durability}</p>
+                  <p class="mb-6 body-font" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${deepAccentColor}; opacity: 0.9; font-weight: 500;">${result.durability}</p>
                 ` : ''}
                 ${result.clarifier ? `
-                  <p class="mb-8 body-font italic" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${textColor}; opacity: 0.9; font-weight: 400;">${result.clarifier}</p>
+                  <p class="mb-8 body-font italic" style="font-size: ${baseSize * 0.98}px; line-height: 1.6; color: ${textColor}; opacity: 0.9; font-weight: 300;">${result.clarifier}</p>
               ` : ''}
             </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
-              <h4 class="mb-4 heading-font" style="font-size: ${baseSize * 1.4}px; font-weight: 650; color: ${textColor};">What's Included:</h4>
+              <h4 class="mb-4 heading-font" style="font-size: ${baseSize * 1.4}px; font-weight: 500; color: ${textColor};">What's Included:</h4>
               <ul class="space-y-3">
                 ${result.features.map(feature => `
-                  <li class="flex items-start body-font" style="font-size: ${baseSize * 0.98}px; color: ${textColor}; font-weight: 450; line-height: 1.55;">
+                  <li class="flex items-start body-font" style="font-size: ${baseSize * 0.98}px; color: ${textColor}; font-weight: 300; line-height: 1.55;">
                     <span class="mr-3" style="color: ${accentColor};">✓</span>
                     <span>${feature}</span>
                   </li>
@@ -467,12 +467,12 @@
 
             ${result.upsell ? `
               <div class="rounded-lg p-6 mb-8" style="background-color: ${secondaryColor}; border-left: 4px solid ${primaryColor};">
-                <p class="body-font" style="font-size: ${baseSize * 1.02}px; color: ${textColor}; line-height: 1.6; font-weight: 500;">${result.upsell}</p>
+                <p class="body-font" style="font-size: ${baseSize * 1.02}px; color: ${textColor}; line-height: 1.6; font-weight: 400;">${result.upsell}</p>
               </div>
             ` : ''}
 
             <div class="text-center mb-8">
-              <p class="mb-6 body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.6; color: ${textColor}; font-weight: 600;">${result.nextStep}</p>
+              <p class="mb-6 body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.4; color: ${textColor}; font-weight: 500;">${result.nextStep}</p>
               <button
                 class="px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
@@ -484,12 +484,12 @@
             </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${primaryColor};">
-              <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 650; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
-              <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.9}px; color: ${mutedColor}; opacity: 0.9; line-height: 1.55;">We'll send you personalized links, reassurance about your choice, and helpful next steps.</p>
+              <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 500; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
+              <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.9}px; color: ${mutedColor}; opacity: 0.9; line-height: 1.4;">We'll send you personalized links, reassurance about your choice, and helpful next steps.</p>
 
               <form onsubmit="handleEmailSubmit(event)" class="max-w-md mx-auto">
                 <div class="mb-4">
-                  <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 600;">Email Address</label>
+                  <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">Email Address</label>
                   <input
                     type="email"
                     id="email-input"
@@ -520,7 +520,7 @@
             <div class="text-center">
               <button
                 class="px-6 py-3 rounded-lg body-font"
-                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${helperTextSize}px; font-weight: 500;"
+                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${helperTextSize}px; font-weight: 400;"
                 onmouseover="this.style.backgroundColor='${secondaryColor}';"
                 onmouseout="this.style.backgroundColor='transparent';"
                 onclick="restartQuiz()">
@@ -554,8 +554,8 @@
         <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
           <div class="text-center fade-in">
             <div style="font-size: ${baseSize * 4}px;" class="mb-6">🎂</div>
-            <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}px; font-weight: 650; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
-            <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.65; color: ${textColor}; opacity: 0.85; font-weight: 400;">${quizSubtitle}</p>
+            <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}px; font-weight: 500; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
+            <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
 
             <button
               class="px-8 py-4 rounded-lg font-semibold body-font"
