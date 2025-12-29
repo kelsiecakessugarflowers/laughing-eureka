@@ -151,7 +151,7 @@
         upsell: '💡 Want extra support? Add access to our resource library for guidance and design tips!',
         nextStep: 'These are in stock and ship fast — perfect if your date is coming up soon.',
         emailContent: {
-          shopLink: 'https://kelsiecakes.com/ready-to-ship',
+          shopLink: 'https://sugarflowersonline.com/collections/all',
           reassurance: 'These designs are in stock and will ship to you within 1-2 business days.',
           cta: 'Browse our Ready to Ship collection and find something beautiful that arrives fast.'
         }
@@ -165,7 +165,7 @@
         upsell: '💡 Want us to handle all the design work? Upgrade to Fully Custom and we\'ll create the perfect arrangement for you!',
         nextStep: 'Choose your flowers and colors, and we\'ll make them to order for you.',
         emailContent: {
-          shopLink: 'https://kelsiecakes.com/made-to-order',
+          shopLink: 'https://kelsiecakes.com/shop-all/',
           reassurance: 'You know your flowers — we\'ll make them perfectly in your colors with a 6-week lead time.',
           cta: 'Explore Made to Order options and customize the colors to match your vision.'
         }
@@ -178,7 +178,7 @@
         features: ['Order minimum: $150', 'Minimum 6 weeks lead time', 'Pre-arranged, coordinated designs', 'Optional guides included', 'Great if you want “done-for-you” styling'],
         nextStep: 'These take the guesswork out and still feel custom.',
         emailContent: {
-          shopLink: 'https://kelsiecakes.com/curated',
+          shopLink: 'https://kelsiecakes.com/bundles/',
           reassurance: 'These coordinated arrangements take the guesswork out while still feeling custom and cohesive.',
           cta: 'See our Curated Arrangements and pick a combination that speaks to you.'
         }
@@ -189,11 +189,11 @@
         durability: 'Built to last — doesn\'t wilt or bruise, and ships safely no matter the distance.',
         clarifier: 'Best for couples and their vendors who are early in planning and want a collaborative design process.',
         features: ['Minimum: $500', 'Rush options available', 'Unlimited customization', 'High-touch support & consultation', 'White glove delivery option'],
-        nextStep: 'This starts with a design conversation before anything is made.',
+        nextStep: 'Start with the inquiry form so I can check availability for your event date before we dive into design details.',
         emailContent: {
-          shopLink: 'https://kelsiecakes.com/fully-custom',
+          shopLink: 'https://kelsiecakes.com/inquire-here',
           reassurance: 'We’ll design something unique together, with clear next steps and a timeline that matches your date.',
-          cta: 'Schedule a consultation and we’ll start designing your custom topper.'
+          cta: 'Fill out the inquiry form to confirm availability for your event date.'
         }
       }
     };
@@ -460,6 +460,14 @@
           fullyCustom: config.fully_custom_title || defaultConfig.fully_custom_title
         };
 
+        const primaryCtaText = resultKey === 'fullyCustom'
+          ? 'Fill out the form to check availability'
+          : `View ${titleMap[resultKey]} Options`;
+
+        const secondaryCta = resultKey === 'fullyCustom'
+          ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
+          : null;
+
         app.innerHTML = `
           <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
               <div class="text-center mb-12">
@@ -502,8 +510,16 @@
                 class="primary-cta-btn px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
                 onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
-                View ${titleMap[resultKey]} Options
+                ${primaryCtaText}
               </button>
+              ${secondaryCta ? `
+                <button
+                  class="secondary-cta-btn px-6 py-3 rounded-lg font-semibold mb-2 w-full sm:w-auto body-font"
+                  style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.98}px;"
+                  onclick="window.open('${secondaryCta.href}', '_blank', 'noopener,noreferrer')">
+                  ${secondaryCta.label}
+                </button>
+              ` : ''}
             </div>
 
               <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${primaryColor};">
@@ -534,9 +550,6 @@
                 <div id="email-message" class="mt-4"></div>
               </form>
 
-              <p class="mt-6 text-center body-font" style="font-size: ${baseSize * 0.82}px; color: ${mutedColor}; opacity: 0.7;">
-                Tags applied: ${getSegmentationTags(resultKey).join(', ')}
-              </p>
             </div>
 
             <div class="text-center">
@@ -554,6 +567,12 @@
           button.style.opacity = '0.9';
         }, (button) => {
           button.style.opacity = '1';
+        });
+
+        addHoverListeners(app, '.secondary-cta-btn', (button) => {
+          button.style.backgroundColor = secondaryColor;
+        }, (button) => {
+          button.style.backgroundColor = 'transparent';
         });
 
         const emailSubmitButton = app.querySelector('#email-submit-btn');
