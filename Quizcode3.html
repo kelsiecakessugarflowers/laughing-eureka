@@ -65,10 +65,10 @@
       font_size: 17,
       quiz_title: "Find Your Perfect Sugar Flower Match",
       quiz_subtitle: "Discover whether ready-to-ship flowers or a bespoke design will bring your vision to life — you're 5 questions away from the answer!",
-      ready_to_ship_title: "Ready to Ship",
-      made_to_order_title: "Made to Order",
-      curated_title: "Curated Arrangements",
-      fully_custom_title: "Fully Custom",
+      ready_to_ship_title: "Ready to Ship Sugar Flowers",
+      made_to_order_title: "Made to Order Sugar Flowers",
+      curated_title: "Curated Sugar Flower Arrangements",
+      fully_custom_title: "Fully Custom Sugar Flower Design",
       email_prompt: "Want these links + next steps sent to your email?",
       email_button_text: "Send Me My Results"
     };
@@ -510,7 +510,14 @@
           : result.clarifier || roleContext || '';
 
         app.innerHTML = `
-          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+          <div class="max-w-3xl mx-auto px-6 py-12 fade-in">
+              <div class="relative mb-10" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor}; border-radius: 18px; overflow: hidden; box-shadow: 0 14px 34px rgba(73, 44, 56, 0.12);">
+                <img src="${resultImage}" alt="${titleMap[resultKey]} sugar flower collection" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                <div class="absolute inset-x-0 bottom-0 p-4" style="background: linear-gradient(180deg, rgba(21, 12, 16, 0) 0%, rgba(21, 12, 16, 0.65) 100%);">
+                  <p class="heading-font" style="font-size: ${baseSize * 1.1}px; color: #ffffff; font-weight: 600; letter-spacing: 0.02em;">Your match: ${titleMap[resultKey]}</p>
+                </div>
+              </div>
+
               <div class="mb-10 text-left">
                 <div class="flex items-center gap-4 mb-4">
                   <div class="flex items-center justify-center h-12 w-12 rounded-full" style="background-color: ${softHighlight}; color: ${primaryColor}; font-size: ${baseSize * 1.4}px;">
@@ -527,10 +534,6 @@
                 </div>
                 <p class="body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.55; color: ${textColor}; font-weight: 400; max-width: 50ch;">${summaryText}</p>
                 <p class="body-font mt-3" style="font-size: ${baseSize * 0.98}px; color: ${deepAccentColor}; font-weight: 600; letter-spacing: 0.01em;">Best for: <span style="color: ${textColor}; font-weight: 400;">${bestForText}</span></p>
-              </div>
-
-              <div class="mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor}; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.08);">
-                <img src="${resultImage}" alt="${titleMap[resultKey]} sugar flower collection" style="width: 100%; height: auto; display: block;">
               </div>
 
             <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
@@ -677,6 +680,10 @@
               onclick="startQuiz()">
               Start Quiz
             </button>
+            <p class="mt-6 body-font" style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.9;">
+              This quiz is brought to you by sugar flowers by
+              <a href="https://kesiecakes.com" target="_blank" rel="noopener noreferrer" style="color: ${primaryColor}; text-decoration: underline;">Kelsie cakes</a>.
+            </p>
           </div>
         </div>
       `;
