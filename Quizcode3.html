@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Cake Topper Quiz</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .progress-bar {
+      transition: width 0.3s ease;
+    }
+    
+    .option-card {
+      transition: all 0.2s ease;
+    }
+    
+    .option-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.4s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .heading-font {
+      font-family: 'Source Serif 4', serif;
+    }
+    
+    .body-font {
+      font-family: 'Raleway', sans-serif;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="w-full h-full overflow-auto"></div>
+  <script>
+    const defaultConfig = {
+      background_color: "#fef8f5",
+      surface_color: "#ffffff",
+      text_color: "#2d2d2d",
+      primary_action_color: "#c78ca1",
+      secondary_action_color: "#f5e5e9",
+      font_family: "Source Serif 4",
+      font_size: 16,
+      quiz_title: "Find Your Perfect Cake Topper",
+      quiz_subtitle: "Answer a few questions to discover which option suits your wedding vision",
+      ready_to_ship_title: "Ready to Ship",
+      made_to_order_title: "Made to Order",
+      curated_title: "Curated Arrangements",
+      fully_custom_title: "Fully Custom",
+      email_prompt: "Want these links + next steps sent to your email?",
+      email_button_text: "Send Me My Results"
+    };
+
+    let config = {};
+    let currentQuestion = 0;
+    let answers = {};
+    let allSubmissions = [];
+
+    const questions = [
+      {
+        id: 'role',
+        question: 'What\'s your role?',
+        options: [
+          { text: 'Wedding vendor', value: 'vendor', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 2 } },
+          { text: 'Baker/cake maker', value: 'baker', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 2 } },
+          { text: 'Person getting married', value: 'couple', scores: { readyToShip: 2, madeToOrder: 1, curated: 2, fullyCustom: 3 } },
+          { text: 'Family member of person getting married', value: 'family', scores: { readyToShip: 2, madeToOrder: 0, curated: 3, fullyCustom: 2 } }
+        ]
+      },
+      {
+        id: 'timeline',
+        question: 'When is your wedding?',
+        options: [
+          { text: 'Less than 6 weeks away', value: 'urgent', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+          { text: '6-12 weeks away', value: 'soon', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 1 } },
+          { text: '3-6 months away', value: 'planning', scores: { readyToShip: 0, madeToOrder: 2, curated: 2, fullyCustom: 2 } },
+          { text: 'More than 6 months away', value: 'longterm', scores: { readyToShip: 0, madeToOrder: 1, curated: 1, fullyCustom: 3 } }
+        ]
+      },
+      {
+        id: 'experience',
+        question: 'How familiar are you with working with sugar flowers?',
+        options: [
+          { text: 'Very familiar — I\'ve worked with sugar flowers before', value: 'pro', scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 1 } },
+          { text: 'Somewhat familiar — I\'ve used them, but I still have questions', value: 'amateur', scores: { readyToShip: 2, madeToOrder: 1, curated: 3, fullyCustom: 1 } },
+          { text: 'New to sugar flowers — I want clear guidance', value: 'novice', scores: { readyToShip: 2, madeToOrder: 0, curated: 3, fullyCustom: 1 } }
+        ]
+      },
+      {
+        id: 'customization',
+        question: 'How specific do you need your cake flowers to be? (Think colors, flower types, and overall look.)',
+        options: [
+          { text: 'I want you to design something unique for my cake', value: 'custom', scores: { readyToShip: 0, madeToOrder: 0, curated: 0, fullyCustom: 3 } },
+          { text: 'I\'m open to your existing designs', value: 'existing', scores: { readyToShip: 3, madeToOrder: 0, curated: 2, fullyCustom: 0 } },
+          { text: 'I want your designs adjusted to match my color palette and style', value: 'adjusted', scores: { readyToShip: 0, madeToOrder: 3, curated: 2, fullyCustom: 1 } }
+        ]
+      },
+      {
+        id: 'budget',
+        question: 'What\'s your budget range?',
+        options: [
+          { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+          { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 0 } },
+          { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 2, fullyCustom: 3 } }
+        ]
+      }
+    ];
+
+    const results = {
+      readyToShip: {
+        icon: '📦',
+        description: 'Perfect for you! These beautiful toppers are in stock and ready to ship immediately. Browse our collection of pre-made designs that can arrive at your door in days.',
+        durability: 'Designed to ship safely and never wilt, bruise, or expire.',
+        clarifier: 'Best if you want something beautiful fast — no customization, no waiting.',
+        features: ['Ships within 1-2 business days', 'No minimum - flexible pricing', 'Beautiful pre-designed styles', 'Perfect for last-minute needs', 'No support needed - ready to use'],
+        upsell: '💡 Want extra support? Add access to our resource library for guidance and design tips!',
+        nextStep: 'These are in stock and ship fast — perfect if your date is coming up soon.',
+        emailContent: {
+          shopLink: 'https://kelsiecakes.com/ready-to-ship',
+          reassurance: 'These designs are in stock and will ship to you within 1-2 business days.',
+          cta: 'Browse our Ready to Ship collection and find something beautiful that arrives fast.'
+        }
+      },
+      madeToOrder: {
+        icon: '✨',
+        description: 'Great choice! Individual made-to-order flowers perfect for professional cake decorators. Customize colors to match your vision. Minimum 6 weeks lead time required.',
+        durability: 'Made well in advance so they\'re ready when you need them.',
+        clarifier: 'Best if you already know what flowers you want and just need them made in your colors.',
+        features: ['Starting at $150', 'Minimum 6 weeks lead time', 'Color customization only', 'Ideal for cake decorating pros', 'Access to resource library & help docs'],
+        upsell: '💡 Want us to handle all the design work? Upgrade to Fully Custom and we\'ll create the perfect arrangement for you!',
+        nextStep: 'Choose your flowers and colors, and we\'ll make them to order for you.',
+        emailContent: {
+          shopLink: 'https://kelsiecakes.com/made-to-order',
+          reassurance: 'You know your flowers — we\'ll make them perfectly in your colors with a 6-week lead time.',
+          cta: 'Explore Made to Order options and customize the colors to match your vision.'
+        }
+      },
+      curated: {
+        icon: '💐',
+        description: 'Excellent match! Pre-arranged flower combinations perfect for amateurs and first-timers. Beautifully coordinated designs that take the guesswork out of styling.',
+        durability: 'Doesn\'t wilt, bruise, or expire — stays beautiful from delivery to your big day.',
+        clarifier: 'Best if you want a beautiful, cohesive look without having to design it yourself.',
+        features: ['Starting at $150-$500', 'Minimum 6 weeks lead time', 'Coordinated arrangements', 'Perfect for amateurs & lay people', 'Resource library & guides included'],
+        nextStep: 'These take the guesswork out and still feel custom.',
+        emailContent: {
+          shopLink: 'https://kelsiecakes.com/curated',
+          reassurance: 'These coordinated arrangements take the guesswork out while still feeling custom and cohesive.',
+          cta: 'See our Curated Arrangements and pick a combination that speaks to you.'
+        }
+      },
+      fullyCustom: {
+        icon: '��',
+        description: 'Perfect for your vision! Work directly with our designers to create a completely bespoke topper. High-touch support, rush options available, and white glove delivery.',
+        durability: 'Built to last — doesn\'t wilt or bruise, and ships safely no matter the distance.',
+        clarifier: 'Best for couples and their vendors who are early in planning and want a collaborative design process.',
+        features: ['Starting at $500', 'Rush lead times available', 'Unlimited customization', 'High-touch support & consultation', 'White glove delivery option'],
+        nextStep: 'This starts with a design conversation before anything is made.',
+        emailContent: {
+          shopLink: 'https://kelsiecakes.com/fully-custom',
+          reassurance: 'We\'ll work with you one-on-one to design something completely unique for your celebration.',
+          cta: 'Schedule a consultation to start designing your fully custom cake topper.'
+        }
+      }
+    };
+
+    // Data SDK handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allSubmissions = data;
+      }
+    };
+
+    function calculateResult() {
+      const scores = {
+        readyToShip: 0,
+        madeToOrder: 0,
+        curated: 0,
+        fullyCustom: 0
+      };
+
+      Object.values(answers).forEach(answer => {
+        Object.keys(scores).forEach(key => {
+          scores[key] += answer.scores[key];
+        });
+      });
+
+      if (answers.timeline?.value === "urgent") {
+        return "readyToShip";
+      }
+
+      const maxScore = Math.max(...Object.values(scores));
+      const winners = Object.keys(scores).filter(key => scores[key] === maxScore);
+      
+      const priority = ["fullyCustom", "curated", "madeToOrder", "readyToShip"];
+      return priority.find(key => winners.includes(key)) || winners[0];
+    }
+
+    function getRoleTags() {
+      const tags = [];
+      
+      // Role tags based on experience
+      if (answers.experience?.value === 'pro') {
+        tags.push('role_pro');
+      } else if (answers.experience?.value === 'amateur' || answers.experience?.value === 'novice') {
+        tags.push('role_couple');
+      }
+      
+      return tags;
+    }
+
+    async function handleEmailSubmit(event) {
+      event.preventDefault();
+      
+      const emailInput = document.getElementById('email-input');
+      const submitButton = document.getElementById('email-submit-btn');
+      const messageDiv = document.getElementById('email-message');
+      const email = emailInput.value.trim();
+      
+      if (!email || !email.includes('@')) {
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Please enter a valid email address.</p>';
+        return;
+      }
+
+      // Disable button and show loading
+      submitButton.disabled = true;
+      submitButton.style.opacity = '0.6';
+      submitButton.textContent = 'Sending...';
+
+      const resultKey = calculateResult();
+      const roleTags = getRoleTags();
+      
+      // Tags to apply
+      const tags = [
+        `quiz_result_${resultKey}`,
+        ...roleTags
+      ];
+
+      const submission = {
+        email: email,
+        result: resultKey,
+        timestamp: new Date().toISOString(),
+        timeline: answers.timeline?.value || '',
+        experience: answers.experience?.value || '',
+        tags: tags.join(', ')
+      };
+
+      const createResult = await window.dataSdk.create(submission);
+
+      if (createResult.isOk) {
+        messageDiv.innerHTML = `
+          <div class="body-font" style="color: #38a169; font-size: 14px; line-height: 1.5;">
+            <p style="font-weight: 500; margin-bottom: 8px;">✓ Success! Check your email.</p>
+            <p style="font-size: 13px; opacity: 0.9;">We've sent your ${results[resultKey].emailContent ? 'personalized results' : 'results'} and next steps.</p>
+          </div>
+        `;
+        emailInput.value = '';
+        emailInput.disabled = true;
+      } else {
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Something went wrong. Please try again.</p>';
+        submitButton.disabled = false;
+        submitButton.style.opacity = '1';
+        submitButton.textContent = config.email_button_text || defaultConfig.email_button_text;
+      }
+    }
+
+    function renderQuiz() {
+      const app = document.getElementById('app');
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Georgia, serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      app.style.backgroundColor = backgroundColor;
+      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      app.style.color = textColor;
+
+      const progress = ((currentQuestion) / questions.length) * 100;
+
+      if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        app.innerHTML = `
+          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+            <div class="mb-8">
+              <div class="h-2 rounded-full mb-6" style="background-color: ${secondaryColor};">
+                <div class="progress-bar h-full rounded-full" style="width: ${progress}%; background-color: ${primaryColor};"></div>
+              </div>
+              <p class="text-center mb-2 body-font" style="font-size: ${baseSize * 0.875}px; color: ${textColor}; opacity: 0.7; font-weight: 300;">Question ${currentQuestion + 1} of ${questions.length}</p>
+              <h2 class="text-center mb-12 heading-font" style="font-size: ${baseSize * 2.25}px; font-weight: 600; color: ${textColor};">${q.question}</h2>
+            </div>
+            
+            <div class="space-y-4">
+              ${q.options.map((option, index) => `
+                <button 
+                  class="option-card w-full p-6 rounded-lg text-left shadow-sm body-font"
+                  style="background-color: ${surfaceColor}; border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor}; font-weight: 400;"
+                  onmouseover="this.style.borderColor='${primaryColor}'; this.style.backgroundColor='${secondaryColor}';"
+                  onmouseout="this.style.borderColor='${secondaryColor}'; this.style.backgroundColor='${surfaceColor}';"
+                  onclick="selectAnswer(${currentQuestion}, ${index})">
+                  ${option.text}
+                </button>
+              `).join('')}
+            </div>
+
+            ${currentQuestion > 0 ? `
+              <button 
+                class="mt-8 px-6 py-3 rounded-lg body-font"
+                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.875}px; font-weight: 400;"
+                onmouseover="this.style.backgroundColor='${secondaryColor}';"
+                onmouseout="this.style.backgroundColor='transparent';"
+                onclick="goBack()">
+                ← Back
+              </button>
+            ` : ''}
+          </div>
+        `;
+      } else {
+        const resultKey = calculateResult();
+        const result = results[resultKey];
+        const titleMap = {
+          readyToShip: config.ready_to_ship_title || defaultConfig.ready_to_ship_title,
+          madeToOrder: config.made_to_order_title || defaultConfig.made_to_order_title,
+          curated: config.curated_title || defaultConfig.curated_title,
+          fullyCustom: config.fully_custom_title || defaultConfig.fully_custom_title
+        };
+
+        app.innerHTML = `
+          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+            <div class="text-center mb-12">
+              <div style="font-size: ${baseSize * 4}px;" class="mb-4">${result.icon}</div>
+              <h2 class="mb-4 heading-font" style="font-size: ${baseSize * 2.5}px; font-weight: 600; color: ${textColor};">Your Perfect Match:</h2>
+              <h3 class="mb-6 heading-font" style="font-size: ${baseSize * 1.875}px; color: ${primaryColor}; font-weight: 600;">${titleMap[resultKey]}</h3>
+              <p class="mb-4 body-font" style="font-size: ${baseSize * 1.125}px; line-height: 1.6; color: ${textColor}; font-weight: 400;">${result.description}</p>
+              ${result.durability ? `
+                <p class="mb-8 body-font" style="font-size: ${baseSize * 1}px; line-height: 1.6; color: ${textColor}; opacity: 0.85; font-weight: 500;">${result.durability}</p>
+              ` : ''}
+              ${result.clarifier ? `
+                <p class="mb-8 body-font italic" style="font-size: ${baseSize * 1}px; line-height: 1.6; color: ${textColor}; opacity: 0.85; font-weight: 400;">${result.clarifier}</p>
+              ` : ''}
+            </div>
+
+            <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
+              <h4 class="mb-4 heading-font" style="font-size: ${baseSize * 1.375}px; font-weight: 600; color: ${textColor};">What's Included:</h4>
+              <ul class="space-y-3">
+                ${result.features.map(feature => `
+                  <li class="flex items-start body-font" style="font-size: ${baseSize}px; color: ${textColor}; font-weight: 400;">
+                    <span class="mr-3" style="color: ${primaryColor};">✓</span>
+                    <span>${feature}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            ${result.upsell ? `
+              <div class="rounded-lg p-6 mb-8" style="background-color: ${secondaryColor}; border-left: 4px solid ${primaryColor};">
+                <p class="body-font" style="font-size: ${baseSize}px; color: ${textColor}; line-height: 1.6; font-weight: 400;">${result.upsell}</p>
+              </div>
+            ` : ''}
+
+            <div class="text-center mb-8">
+              <p class="mb-6 body-font" style="font-size: ${baseSize * 1.0625}px; line-height: 1.6; color: ${textColor}; font-weight: 500;">${result.nextStep}</p>
+              <button 
+                class="px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
+                style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.125}px;"
+                onmouseover="this.style.opacity='0.9';"
+                onmouseout="this.style.opacity='1';"
+                onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
+                View ${titleMap[resultKey]} Options
+              </button>
+            </div>
+
+            <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${primaryColor};">
+              <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.25}px; font-weight: 600; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
+              <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.875}px; color: ${textColor}; opacity: 0.75; line-height: 1.5;">We'll send you personalized links, reassurance about your choice, and helpful next steps.</p>
+              
+              <form onsubmit="handleEmailSubmit(event)" class="max-w-md mx-auto">
+                <div class="mb-4">
+                  <label for="email-input" class="block mb-2 body-font" style="font-size: ${baseSize * 0.875}px; color: ${textColor}; font-weight: 500;">Email Address</label>
+                  <input 
+                    type="email" 
+                    id="email-input"
+                    required
+                    placeholder="your@email.com"
+                    class="w-full px-4 py-3 rounded-lg body-font"
+                    style="border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: ${backgroundColor};"
+                    onfocus="this.style.borderColor='${primaryColor}';"
+                    onblur="this.style.borderColor='${secondaryColor}';">
+                </div>
+                <button 
+                  type="submit"
+                  id="email-submit-btn"
+                  class="w-full px-8 py-3 rounded-lg font-semibold body-font"
+                  style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize}px;"
+                  onmouseover="if(!this.disabled) this.style.opacity='0.9';"
+                  onmouseout="if(!this.disabled) this.style.opacity='1';">
+                  ${config.email_button_text || defaultConfig.email_button_text}
+                </button>
+                <div id="email-message" class="mt-4"></div>
+              </form>
+              
+              <p class="mt-6 text-center body-font" style="font-size: ${baseSize * 0.75}px; color: ${textColor}; opacity: 0.6;">
+                Tags applied: quiz_result_${resultKey}${getRoleTags().length > 0 ? ', ' + getRoleTags().join(', ') : ''}
+              </p>
+            </div>
+
+            <div class="text-center">
+              <button 
+                class="px-6 py-3 rounded-lg body-font"
+                style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${baseSize * 0.875}px; font-weight: 400;"
+                onmouseover="this.style.backgroundColor='${secondaryColor}';"
+                onmouseout="this.style.backgroundColor='transparent';"
+                onclick="restartQuiz()">
+                Retake Quiz
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderIntro() {
+      const app = document.getElementById('app');
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Georgia, serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const quizTitle = config.quiz_title || defaultConfig.quiz_title;
+      const quizSubtitle = config.quiz_subtitle || defaultConfig.quiz_subtitle;
+
+      app.style.backgroundColor = backgroundColor;
+      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      app.style.color = textColor;
+
+      app.innerHTML = `
+        <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
+          <div class="text-center fade-in">
+            <div style="font-size: ${baseSize * 4}px;" class="mb-6">🎂</div>
+            <h1 class="mb-4 heading-font" style="font-size: ${baseSize * 2.75}px; font-weight: 600; color: ${textColor};">${quizTitle}</h1>
+            <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${baseSize * 1.125}px; line-height: 1.6; color: ${textColor}; opacity: 0.8; font-weight: 400;">${quizSubtitle}</p>
+            
+            <button 
+              class="px-8 py-4 rounded-lg font-semibold body-font"
+              style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.125}px;"
+              onmouseover="this.style.opacity='0.9';"
+              onmouseout="this.style.opacity='1';"
+              onclick="startQuiz()">
+              Start Quiz
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.selectAnswer = function(questionIndex, optionIndex) {
+      const question = questions[questionIndex];
+      answers[question.id] = question.options[optionIndex];
+      currentQuestion++;
+      renderQuiz();
+    };
+
+    window.goBack = function() {
+      currentQuestion--;
+      const prevQuestion = questions[currentQuestion];
+      delete answers[prevQuestion.id];
+      renderQuiz();
+    };
+
+    window.startQuiz = function() {
+      currentQuestion = 0;
+      renderQuiz();
+    };
+
+    window.restartQuiz = function() {
+      currentQuestion = 0;
+      answers = {};
+      renderIntro();
+    };
+
+    window.handleEmailSubmit = handleEmailSubmit;
+
+    async function onConfigChange(newConfig) {
+      Object.assign(config, newConfig);
+      if (currentQuestion === 0 && Object.keys(answers).length === 0) {
+        renderIntro();
+      } else {
+        renderQuiz();
+      }
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (value) => {
+              cfg.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              cfg.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (value) => {
+              cfg.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              cfg.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              cfg.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => cfg.font_family || defaultConfig.font_family,
+          set: (value) => {
+            cfg.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => cfg.font_size || defaultConfig.font_size,
+          set: (value) => {
+            cfg.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['quiz_title', cfg.quiz_title || defaultConfig.quiz_title],
+        ['quiz_subtitle', cfg.quiz_subtitle || defaultConfig.quiz_subtitle],
+        ['ready_to_ship_title', cfg.ready_to_ship_title || defaultConfig.ready_to_ship_title],
+        ['made_to_order_title', cfg.made_to_order_title || defaultConfig.made_to_order_title],
+        ['curated_title', cfg.curated_title || defaultConfig.curated_title],
+        ['fully_custom_title', cfg.fully_custom_title || defaultConfig.fully_custom_title],
+        ['email_prompt', cfg.email_prompt || defaultConfig.email_prompt],
+        ['email_button_text', cfg.email_button_text || defaultConfig.email_button_text]
+      ]);
+    }
+
+    async function init() {
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+        config = window.elementSdk.config;
+      }
+
+      renderIntro();
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b5597f456184b0a',t:'MTc2Njk3MjQ3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
