@@ -123,12 +123,13 @@
         id: 'budget',
         question: 'What\'s your budget range?',
         options: [
-          { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
-          { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 0 } },
-          { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 2, fullyCustom: 3 } }
-        ]
-      }
-    ];
+      { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+      { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 2, fullyCustom: 0 } },
+      { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 2, fullyCustom: 3 } },
+      { text: '$1000+', value: 'premium', scores: { readyToShip: 0, madeToOrder: 0, curated: 0, fullyCustom: 5 } }
+    ]
+  }
+];
 
     const results = {
       readyToShip: {
@@ -168,6 +169,18 @@
           scores[key] += answer.scores[key];
         });
       });
+
+      const timeline = answers.timeline?.value;
+      const customization = answers.customization?.value;
+      const budget = answers.budget?.value;
+
+      if (customization === 'high' && timeline === 'soon') {
+        return 'fullyCustom';
+      }
+
+      if (budget === 'premium') {
+        return 'fullyCustom';
+      }
 
       const maxScore = Math.max(...Object.values(scores));
       const winner = Object.keys(scores).find(key => scores[key] === maxScore);
