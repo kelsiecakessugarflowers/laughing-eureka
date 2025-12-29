@@ -77,6 +77,18 @@
     let currentQuestion = 0;
     let answers = {};
     let allSubmissions = [];
+    let hasTrackedResult = false;
+
+    function trackAnalytics(eventName, payload = {}) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, payload);
+        return;
+      }
+
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push({ event: eventName, ...payload });
+      }
+    }
 
     const questions = [
       {
@@ -342,6 +354,14 @@
       } else {
         const resultKey = calculateResult();
         const result = results[resultKey];
+
+        if (!hasTrackedResult) {
+          trackAnalytics('quiz_result', {
+            event_category: 'quiz',
+            event_label: `${resultKey}`
+          });
+          hasTrackedResult = true;
+        }
         const titleMap = {
           readyToShip: config.ready_to_ship_title || defaultConfig.ready_to_ship_title,
           madeToOrder: config.made_to_order_title || defaultConfig.made_to_order_title,
@@ -500,6 +520,7 @@
     window.restartQuiz = function() {
       currentQuestion = 0;
       answers = {};
+      hasTrackedResult = false;
       renderIntro();
     };
 
