@@ -133,12 +133,13 @@
         id: 'budget',
         question: 'What\'s your budget range?',
         options: [
-          { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
-          { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 3, fullyCustom: 1 } },
-          { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 1, fullyCustom: 4 } }
-        ]
-      }
-    ];
+      { text: 'Under $150', value: 'low', scores: { readyToShip: 3, madeToOrder: 0, curated: 0, fullyCustom: 0 } },
+      { text: '$150 - $500', value: 'medium', scores: { readyToShip: 1, madeToOrder: 3, curated: 3, fullyCustom: 1 } },
+      { text: '$500+', value: 'high', scores: { readyToShip: 0, madeToOrder: 1, curated: 1, fullyCustom: 4 } },
+      { text: '$1000+', value: 'premium', scores: { readyToShip: 0, madeToOrder: 0, curated: 0, fullyCustom: 5 } }
+    ]
+  }
+];
 
     const results = {
       readyToShip: {
@@ -241,14 +242,18 @@
       const role = answers.role?.value; // vendor | baker | couple | family
       const timeline = answers.timeline?.value; // urgent | soon | planning | longterm
       const customization = answers.customization?.value; // custom | existing | adjusted
-      const budget = answers.budget?.value; // low | medium | high | unsure
+      const budget = answers.budget?.value; // low | medium | high | premium | unsure
 
       // 1) If urgent: RTS ONLY (your existing rule)
       if (timeline === "urgent") return "readyToShip";
 
+      if (customization === "custom" && timeline === "soon") {
+        return "fullyCustom";
+      }
+
       // 2) High budget + short timeline => allow last-minute ONLY if CUSTOM
       // (so: if they have money and time is tight, route them to Custom, not Curated/MTO)
-      if (budget === "high" && timeline === "soon" && customization !== "existing") {
+      if ((budget === "high" || budget === "premium") && timeline === "soon" && customization !== "existing") {
         return "fullyCustom";
       }
 
