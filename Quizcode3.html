@@ -368,7 +368,13 @@
       const emailInput = document.getElementById('email-input');
       const submitButton = document.getElementById('email-submit-btn');
       const messageDiv = document.getElementById('email-message');
+      const honeypotInput = document.getElementById('company-input');
       const email = emailInput.value.trim();
+
+      if (honeypotInput && honeypotInput.value.trim() !== '') {
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Something went wrong. Please try again.</p>';
+        return;
+      }
       
       if (!email || !email.includes('@')) {
         messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Please enter a valid email address.</p>';
@@ -605,28 +611,32 @@
                 <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.88}px; color: ${mutedColor}; opacity: 0.85; line-height: 1.4;">I’ll send your results + helpful tips. Unsubscribe anytime.</p>
 
                 <form onsubmit="handleEmailSubmit(event)" class="max-w-md mx-auto">
-                <div class="mb-4">
-                  <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">Email Address</label>
-                  <input
-                    type="email"
-                    id="email-input"
-                    required
-                    placeholder="your@email.com"
-                    class="w-full px-4 py-3 rounded-lg body-font"
-                    style="border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: ${backgroundColor};"
-                    onfocus="this.style.borderColor='${primaryColor}';"
-                    onblur="this.style.borderColor='${secondaryColor}';">
-                </div>
-                <button
-                  type="submit"
-                  id="email-submit-btn"
-                  class="w-full px-8 py-3 rounded-lg font-semibold body-font"
-                  style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-                  >
-                  ${config.email_button_text || defaultConfig.email_button_text}
-                </button>
-                <div id="email-message" class="mt-4"></div>
-              </form>
+                  <div style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+                    <label for="company-input">Company</label>
+                    <input type="text" id="company-input" name="company" tabindex="-1" autocomplete="organization">
+                  </div>
+                  <div class="mb-4">
+                    <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">Email Address</label>
+                    <input
+                      type="email"
+                      id="email-input"
+                      required
+                      placeholder="your@email.com"
+                      class="w-full px-4 py-3 rounded-lg body-font"
+                      style="border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: ${backgroundColor};"
+                      onfocus="this.style.borderColor='${primaryColor}';"
+                      onblur="this.style.borderColor='${secondaryColor}';">
+                    </div>
+                    <button
+                      type="submit"
+                      id="email-submit-btn"
+                      class="w-full px-8 py-3 rounded-lg font-semibold body-font"
+                      style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
+                      >
+                      ${config.email_button_text || defaultConfig.email_button_text}
+                    </button>
+                    <div id="email-message" class="mt-4"></div>
+                  </form>
 
             </div>
 
