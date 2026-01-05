@@ -68,7 +68,7 @@ body {
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 
-.rounded-lg { border-radius: 0rem; }
+.rounded-lg { border-radius: 0px; }
 .rounded-full { border-radius: 9999px; }
 .shadow-sm { box-shadow: var(--tw-shadow-sm); }
 
