@@ -252,6 +252,7 @@
       });
 
       const role = answers.role?.value; // vendor | baker | couple | family
+      const experience = answers.experience?.value; // pro | amateur | novice
       const timeline = answers.timeline?.value; // urgent | soon | planning | longterm
       const customization = answers.customization?.value; // custom | existing | adjusted
       const budget = answers.budget?.value; // low | medium | high | premium | unsure
@@ -288,7 +289,7 @@
       // Guardrail: if they say “existing designs,” don’t send them to Fully Custom
       if (customization === "existing") {
         // if urgent, RTS already returned above
-        if (role !== "baker") return pickFromScores(["readyToShip", "curated"]);
+        if (role !== "baker" || experience === "novice") return pickFromScores(["readyToShip", "curated"]);
         return pickFromScores(["readyToShip", "madeToOrder", "curated"]);
       }
 
@@ -297,7 +298,7 @@
       // (Where do they go instead? Curated if they want “done-for-you,” or Custom if they want unique.)
 
       // If not a baker, remove madeToOrder from the pool
-      if (role !== "baker") {
+      if (role !== "baker" || experience === "novice") {
         return pickFromScores(["readyToShip", "curated", "fullyCustom"]);
       }
 
