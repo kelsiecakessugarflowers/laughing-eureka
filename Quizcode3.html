@@ -611,14 +611,14 @@
             <div class="text-center mb-8">
               <p class="mb-6 body-font" style="font-size: ${baseSize * 1.05}px; line-height: 1.4; color: ${textColor}; font-weight: 500;">${result.nextStep}</p>
               <button
-                class="primary-cta-btn px-8 py-4 rounded-lg font-semibold mb-4 w-full sm:w-auto body-font"
+                class="primary-cta-btn px-8 py-4 rounded-no font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
                 onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
                 ${primaryCtaText}
               </button>
               ${secondaryCta ? `
                 <button
-                  class="secondary-cta-btn px-6 py-3 rounded-lg font-semibold mb-2 w-full sm:w-auto body-font"
+                  class="secondary-cta-btn px-6 py-3 rounded-no font-semibold mb-2 w-full sm:w-auto body-font"
                   style="background-color: ${secondaryColor}; color: ${deepAccentColor}; border: 1px solid ${primaryColor}; font-size: ${baseSize * 0.98}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.12);"
                   onclick="window.open('${secondaryCta.href}', '_blank', 'noopener,noreferrer')">
                   ${secondaryCta.label}
@@ -626,7 +626,7 @@
               ` : ''}
             </div>
 
-              <div class="rounded-lg p-8 mb-8" style="background-color: #ffffff; border: 2px solid ${mutedColor};">
+              <div class="rounded-no p-8 mb-8" style="background-color: ${backgroundColor}; border: 2px solid ${secondaryColor};">
                 <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 500; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
                 <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.88}px; color: ${mutedColor}; opacity: 0.85; line-height: 1.4;">I’ll send your results + helpful tips. Unsubscribe anytime.</p>
 
@@ -642,15 +642,15 @@
                       id="email-input"
                       required
                       placeholder="your@email.com"
-                      class="w-full px-4 py-3 rounded-lg body-font"
-                      style="border: 2px solid ${secondaryColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: ${backgroundColor};"
+                      class="w-full px-4 py-3 rounded-no body-font"
+                      style="border: 2px solid ${mutedColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: #ffffff;"
                       onfocus="this.style.borderColor='${primaryColor}';"
                       onblur="this.style.borderColor='${secondaryColor}';">
                     </div>
                     <button
                       type="submit"
                       id="email-submit-btn"
-                      class="w-full px-8 py-3 rounded-lg font-semibold body-font"
+                      class="w-full px-8 py-3 rounded-no font-semibold body-font"
                       style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
                       >
                       ${config.email_button_text || defaultConfig.email_button_text}
@@ -662,7 +662,7 @@
 
             <div class="text-center">
               <button
-                class="retake-btn px-6 py-3 rounded-lg body-font"
+                class="retake-btn px-6 py-3 rounded-no body-font"
                 style="background-color: transparent; color: ${textColor}; border: 1px solid ${secondaryColor}; font-size: ${helperTextSize}px; font-weight: 400;"
                 onclick="restartQuiz()">
                 Retake Quiz
@@ -733,7 +733,7 @@
             <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
 
             <button
-              class="start-btn px-8 py-4 rounded-lg font-semibold body-font"
+              class="start-btn px-8 py-4 rounded-no font-semibold body-font"
               style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
               onclick="startQuiz()">
               Start Quiz
