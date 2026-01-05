@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wedding Cake Topper Quiz</title>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link rel="stylesheet" href="./styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;500;600&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
@@ -408,9 +407,9 @@
 
       if (typeof fetch === 'function' && webhookPayload.email && webhookPayload.result) {
         try {
-          const response = await fetch('https://hooks.airtable.com/workflows/v1/genericWebhook/appqNV5xmJAZrVXZS/wfloTTnIaly5h0ylm/wtrwYXZ5rHSrQCPDQ', {
+          const response = await fetch('https://tiny-rain-7a6b.kelsie-a54.workers.dev/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(webhookPayload)
           });
 
