@@ -1,0 +1,94 @@
+:root {
+  --tw-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Raleway', sans-serif;
+}
+
+.block { display: block; }
+.inline-flex { display: inline-flex; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-center { justify-content: center; }
+.relative { position: relative; }
+.overflow-auto { overflow: auto; }
+
+.h-full { height: 100%; }
+.min-h-full { min-height: 100%; }
+.h-2 { height: 0.5rem; }
+.h-12 { height: 3rem; }
+.w-12 { width: 3rem; }
+.w-full { width: 100%; }
+
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+.max-w-xl { max-width: 36rem; }
+.max-w-2xl { max-width: 42rem; }
+.max-w-3xl { max-width: 48rem; }
+
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-10 { margin-bottom: 2.5rem; }
+.mb-12 { margin-bottom: 3rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.mr-3 { margin-right: 0.75rem; }
+
+.gap-4 { gap: 1rem; }
+.space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }
+.space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-full { border-radius: 9999px; }
+.shadow-sm { box-shadow: var(--tw-shadow-sm); }
+
+.nav-back-btn,
+.start-btn,
+.primary-cta-btn,
+.secondary-cta-btn,
+.retake-btn,
+.option-card {
+  cursor: pointer;
+}
+
+.start-btn,
+.primary-cta-btn,
+.secondary-cta-btn,
+.retake-btn {
+  border: none;
+}
+
+.option-card-list { list-style: none; padding: 0; margin: 0; }
+
+body .body-font { font-family: 'Raleway', sans-serif; }
+body .heading-font { font-family: 'Source Serif 4', serif; }
