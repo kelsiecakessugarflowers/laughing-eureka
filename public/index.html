@@ -476,7 +476,9 @@
       app.style.fontFamily = `${customFont}, ${baseFontStack}`;
       app.style.color = textColor;
 
-      const progress = ((currentQuestion) / questions.length) * 100;
+      const progress = currentQuestion < questions.length
+        ? Math.min(((currentQuestion + 1) / questions.length) * 100, 100)
+        : 100;
 
       if (currentQuestion < questions.length) {
         const q = questions[currentQuestion];
