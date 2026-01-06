@@ -365,12 +365,12 @@
       const email = emailInput.value.trim();
 
       if (honeypotInput && honeypotInput.value.trim() !== '') {
-        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Something went wrong. Please try again.</p>';
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Hmmm...are you human? 👀 Something went wrong. Please try again.</p>';
         return;
       }
       
       if (!email || !email.includes('@')) {
-        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Please enter a valid email address.</p>';
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Oops! You need to enter a valid email address.</p>';
         return;
       }
 
@@ -430,14 +430,14 @@
       if (webhookOk) {
         messageDiv.innerHTML = `
           <div class="body-font" style="color: #38a169; font-size: 14px; line-height: 1.5;">
-            <p style="font-weight: 300; margin-bottom: 8px;">✓ Success! Check your email.</p>
+            <p style="font-weight: 300; margin-bottom: 8px;">🎉 Success! Please check your email.</p>
             <p style="font-size: 13px; opacity: 0.9;">We've sent your ${results[resultKey].emailContent ? 'personalized results' : 'results'} and next steps.</p>
           </div>
         `;
         emailInput.value = '';
         emailInput.disabled = true;
       } else {
-        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Something went wrong. Please try again.</p>';
+        messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Oh, biscuits. Something went wrong. Please try again.</p>';
         submitButton.disabled = false;
         submitButton.style.opacity = '1';
         submitButton.textContent = config.email_button_text || defaultConfig.email_button_text;
@@ -732,7 +732,7 @@
         <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
           <div class="text-center fade-in">
             <div class="mb-8" style="border-radius: 0px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.14); border: 1px solid ${secondaryColor}; background-color: ${surfaceColor};">
-              <img src="https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Luxury_wedding_cake_featuring_custom_sugar_flower_design_-_whimsical_garden_wedding_with_gum_paste_flowers.png?v=1766949399" alt="Luxury wedding cake decorated with custom sugar flowers" style="width: 100%; height: auto; display: block;">
+              <img src="https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Quiz_results_imagwa_-_Bundles.jpg?v=1766983443" alt="luxury sugar flowers for wedding cakes by kelsie cakes" style="width: 100%; height: auto; display: block;">
             </div>
             <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}px; font-weight: 500; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
             <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
