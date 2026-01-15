@@ -38,6 +38,8 @@ body {
 .max-w-2xl { max-width: 42rem; }
 .max-w-3xl { max-width: 48rem; }
 
+.quiz-container { padding: clamp(1rem, 3vw, 3rem); }
+
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
 .px-8 { padding-left: 2rem; padding-right: 2rem; }

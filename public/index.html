@@ -483,7 +483,7 @@
       if (currentQuestion < questions.length) {
         const q = questions[currentQuestion];
         app.innerHTML = `
-          <div class="max-w-2xl mx-auto px-6 py-12 fade-in">
+          <div class="max-w-2xl mx-auto quiz-container fade-in">
             <div class="mb-8">
               <div class="h-2 rounded-full mb-6" style="background-color: ${softHighlight};">
                 <div class="progress-bar h-full rounded-full" style="width: ${progress}%; background-color: ${primaryColor};"></div>
@@ -572,7 +572,7 @@
 
         app.innerHTML = `
           
-          <div class="max-w-3xl mx-auto px-6 py-12 fade-in">
+          <div class="max-w-3xl mx-auto quiz-container fade-in">
               <div class="relative mb-10" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor}; box-shadow: 0 14px 34px rgba(73, 44, 56, 0.12);">
                 <img src="${resultImage}" alt="${titleMap[resultKey]} sugar flower collection" style="width: 100%; height: auto; display: block; object-fit: fill;">
 
@@ -731,7 +731,7 @@
       app.style.color = textColor;
 
       app.innerHTML = `
-        <div class="max-w-2xl mx-auto px-6 py-12 min-h-full flex flex-col justify-center">
+        <div class="max-w-2xl mx-auto quiz-container min-h-full flex flex-col justify-center">
           <div class="text-center fade-in">
             <div class="mb-8" style="border-radius: 0px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.14); border: 1px solid ${secondaryColor}; background-color: ${surfaceColor};">
               <img src="https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Sugar_Flower_Quiz.png?v=1767710525" alt="luxury sugar flowers for wedding cakes by kelsie cakes" style="width: 100%; height: auto; display: block;">
