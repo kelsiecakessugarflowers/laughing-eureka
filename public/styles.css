@@ -94,3 +94,7 @@ body {
 
 body .body-font { font-family: 'Raleway', sans-serif; }
 body .heading-font { font-family: 'Source Serif 4', serif; }
+
+@media (min-width: 640px) {
+  .sm\:w-auto { width: auto; }
+}
