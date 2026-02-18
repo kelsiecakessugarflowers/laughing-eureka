@@ -263,12 +263,7 @@
       // 1) If urgent: RTS ONLY (your existing rule)
       if (timeline === "urgent") return "readyToShip";
 
-      if (customization === "custom" && timeline === "soon" && budgetAllowsFullyCustom) {
-        return "fullyCustom";
-      }
-
-      // 2) High budget + short timeline => allow last-minute ONLY if CUSTOM
-      // (so: if they have money and time is tight, route them to Custom, not Curated/MTO)
+      // 2) High budget + short timeline => route to Fully Custom (rush options available)
       if (budgetAllowsFullyCustom && timeline === "soon" && customization !== "existing") {
         return "fullyCustom";
       }
@@ -358,10 +353,12 @@
     async function handleEmailSubmit(event) {
       event.preventDefault();
 
+      const nameInput = document.getElementById('name-input');
       const emailInput = document.getElementById('email-input');
       const submitButton = document.getElementById('email-submit-btn');
       const messageDiv = document.getElementById('email-message');
       const honeypotInput = document.getElementById('company-input');
+      const name = nameInput ? nameInput.value.trim() : '';
       const email = emailInput.value.trim();
 
       if (honeypotInput && honeypotInput.value.trim() !== '') {
@@ -369,7 +366,7 @@
         return;
       }
       
-      if (!email || !email.includes('@')) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Oops! You need to enter a valid email address.</p>';
         return;
       }
@@ -404,7 +401,7 @@
         result: submission.result,
         timestamp: submission.timestamp,
         tags: tags,
-        name: answers.name?.value || ''
+        name: name
       };
 
       let webhookOk = false;
@@ -436,6 +433,7 @@
         `;
         emailInput.value = '';
         emailInput.disabled = true;
+        if (nameInput) { nameInput.value = ''; nameInput.disabled = true; }
       } else {
         messageDiv.innerHTML = '<p class="body-font" style="color: #c53030; font-size: 14px;">Oh, biscuits. Something went wrong. Please try again.</p>';
         submitButton.disabled = false;
@@ -486,7 +484,7 @@
           <div class="max-w-2xl mx-auto quiz-container fade-in">
             <div class="mb-8">
               <div class="h-2 rounded-full mb-6" style="background-color: ${softHighlight};">
-                <div class="progress-bar h-full rounded-full" style="width: ${progress}%; background-color: ${primaryColor};"></div>
+                <div class="progress-bar h-full rounded-full" role="progressbar" aria-valuenow="${Math.round(progress)}" aria-valuemin="0" aria-valuemax="100" aria-label="Quiz progress" style="width: ${progress}%; background-color: ${primaryColor};"></div>
               </div>
               <p class="text-center mb-2 body-font" style="font-size: ${questionNumberSize}px; color: ${mutedColor}; opacity: 0.85; font-weight: 400;">Question ${currentQuestion + 1} of ${questions.length}</p>
               <h2 class="text-center mb-12 heading-font" style="font-size: ${questionHeadingSize}px; font-weight: 600; color: ${textColor};">${q.question}</h2>
@@ -643,6 +641,17 @@
                     <input type="text" id="company-input" name="company" tabindex="-1" autocomplete="organization">
                   </div>
                   <div class="mb-4">
+                    <label for="name-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">First Name</label>
+                    <input
+                      type="text"
+                      id="name-input"
+                      placeholder="Kelsie"
+                      class="w-full px-4 py-3 rounded-no body-font"
+                      style="border: 2px solid ${mutedColor}; font-size: ${baseSize}px; color: ${textColor}; background-color: #ffffff;"
+                      onfocus="this.style.borderColor='${primaryColor}';"
+                      onblur="this.style.borderColor='${secondaryColor}';">
+                  </div>
+                  <div class="mb-4">
                     <label for="email-input" class="block mb-2 body-font" style="font-size: ${helperTextSize}px; color: ${textColor}; font-weight: 500;">Email Address</label>
                     <input
                       type="email"
@@ -746,7 +755,7 @@
               Start Quiz
             </button>
             <p class="mt-6 body-font" style="font-size: ${baseSize * 0.9}px; color: ${textColor}; opacity: 0.9;">
-              This quiz is brought to you by <a href="https://kesiecakes.com" target="_blank" rel="noopener noreferrer" style="color: ${primaryColor}; text-decoration: underline;">Sugar Flowers by Kelsie Cakes</a>.
+              This quiz is brought to you by <a href="https://kelsiecakes.com" target="_blank" rel="noopener noreferrer" style="color: ${primaryColor}; text-decoration: underline;">Sugar Flowers by Kelsie Cakes</a>.
             </p>
           </div>
         </div>
@@ -793,11 +802,24 @@
     window.goBack = function() {
       currentQuestion--;
       const prevQuestion = questions[currentQuestion];
+      const prevAnswer = answers[prevQuestion.id];
       delete answers[prevQuestion.id];
       renderQuiz();
+
+      // Restore the previously selected option visually
+      if (prevAnswer) {
+        const prevOptionIndex = prevQuestion.options.findIndex(o => o.value === prevAnswer.value);
+        if (prevOptionIndex !== -1) {
+          const buttons = document.querySelectorAll('.option-card');
+          if (buttons[prevOptionIndex]) {
+            buttons[prevOptionIndex].classList.add('selected');
+          }
+        }
+      }
     };
 
     window.startQuiz = function() {
+      trackAnalytics('quiz_start', { event_category: 'quiz' });
       currentQuestion = 0;
       renderQuiz();
     };
