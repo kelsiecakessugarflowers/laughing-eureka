@@ -99,11 +99,19 @@
     function trackAnalytics(eventName, payload = {}) {
       if (typeof window.gtag === 'function') {
         window.gtag('event', eventName, payload);
-        return;
+      } else if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push({ event: eventName, ...payload });
       }
 
-      if (Array.isArray(window.dataLayer)) {
-        window.dataLayer.push({ event: eventName, ...payload });
+      // If embedded in an iframe, forward events to the parent page so the
+      // host site's GTM / dataLayer can pick them up via the bridge snippet.
+      if (window !== window.parent) {
+        try {
+          window.parent.postMessage(
+            { type: 'quiz_analytics', event: eventName, ...payload },
+            '*'
+          );
+        } catch (e) {}
       }
     }
 
