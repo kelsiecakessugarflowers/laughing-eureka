@@ -466,7 +466,7 @@
       const softHighlight = "#FAF7F4";
 
       const questionNumberSize = baseSize * 0.95;
-      const questionHeadingSize = baseSize * 2.35;
+      const questionHeadingSize = `clamp(${baseSize * 1.2}px, 7vw, ${baseSize * 2.35}px)`;
       const optionTextSize = baseSize * 1.05;
       const helperTextSize = baseSize * 0.9;
 
@@ -487,7 +487,7 @@
                 <div class="progress-bar h-full rounded-full" role="progressbar" aria-valuenow="${Math.round(progress)}" aria-valuemin="0" aria-valuemax="100" aria-label="Quiz progress" style="width: ${progress}%; background-color: ${primaryColor};"></div>
               </div>
               <p class="text-center mb-2 body-font" style="font-size: ${questionNumberSize}px; color: ${mutedColor}; opacity: 0.85; font-weight: 400;">Question ${currentQuestion + 1} of ${questions.length}</p>
-              <h2 class="text-center mb-12 heading-font" style="font-size: ${questionHeadingSize}px; font-weight: 600; color: ${textColor};">${q.question}</h2>
+              <h2 class="text-center mb-12 heading-font" style="font-size: ${questionHeadingSize}; font-weight: 600; color: ${textColor};">${q.question}</h2>
             </div>
 
             <div class="space-y-4 option-card-list">
@@ -584,7 +584,7 @@
                   </div>
                   <div>
                     <p class="body-font" style="font-size: ${helperTextSize}px; color: ${mutedColor}; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Your perfect match</p>
-                    <h3 class="heading-font inline-flex" style="font-size: ${baseSize * 2}px; font-weight: 600; color: ${primaryColor}; line-height: 1.2;">
+                    <h3 class="heading-font inline-flex" style="font-size: clamp(${baseSize * 1.1}px, 6vw, ${baseSize * 2}px); font-weight: 600; color: ${primaryColor}; line-height: 1.2;">
                       <span style="background-color: ${softHighlight}; border: 1px solid ${secondaryColor}; padding: 10px 12px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px;">
                         <span style="color: ${deepAccentColor}; font-weight: 700; font-size: ${baseSize * 0.95}px; letter-spacing: 0.03em;">${titleMap[resultKey]}</span>
                       </span>
@@ -732,8 +732,8 @@
       const quizTitle = config.quiz_title || defaultConfig.quiz_title;
       const quizSubtitle = config.quiz_subtitle || defaultConfig.quiz_subtitle;
 
-      const introHeadingSize = baseSize * 2.8;
-      const introSubheadingSize = baseSize * 1.2;
+      const introHeadingSize = `clamp(${baseSize * 1.35}px, 8vw, ${baseSize * 2.8}px)`;
+      const introSubheadingSize = `clamp(${baseSize * 0.95}px, 4vw, ${baseSize * 1.2}px)`;
 
       app.style.backgroundColor = backgroundColor;
       app.style.fontFamily = `${customFont}, ${baseFontStack}`;
@@ -745,8 +745,8 @@
             <div class="mb-8" style="border-radius: 0px; overflow: hidden; box-shadow: 0 10px 28px rgba(73, 44, 56, 0.14); border: 1px solid ${secondaryColor}; background-color: ${surfaceColor};">
               <img src="https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Sugar_Flower_Quiz.png?v=1767710525" alt="luxury sugar flowers for wedding cakes by kelsie cakes" style="width: 100%; height: auto; display: block;">
             </div>
-            <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}px; font-weight: 500; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
-            <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}px; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
+            <h1 class="mb-4 heading-font" style="font-size: ${introHeadingSize}; font-weight: 500; color: ${textColor}; letter-spacing: 0.01em;">${quizTitle}</h1>
+            <p class="mb-12 max-w-lg mx-auto body-font" style="font-size: ${introSubheadingSize}; line-height: 1.4; color: ${textColor}; opacity: 0.85; font-weight: 300;">${quizSubtitle}</p>
 
             <button
               class="start-btn px-8 py-4 rounded-no font-semibold body-font"
