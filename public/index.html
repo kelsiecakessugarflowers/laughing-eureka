@@ -631,6 +631,21 @@
               ` : ''}
             </div>
 
+            ${ resultKey === 'readyToShip' && answers.budget?.value === 'low' ? `
+              <div class="rounded-lg p-8 mb-8 text-center" style="background-color: ${surfaceColor}; border: 1px dashed ${mutedColor};">
+                <p class="heading-font mb-2" style="font-size: ${baseSize * 1.15}px; font-weight: 600; color: ${textColor};">Not sure yet?</p>
+                <p class="body-font mb-6" style="font-size: ${baseSize * 0.95}px; color: ${mutedColor}; line-height: 1.55; max-width: 44ch; margin-left: auto; margin-right: auto;">
+                  Download the free guide — <em>Are Sugar Flowers Right for You?</em> — to help you decide before you buy anything.
+                </p>
+                <button
+                  class="secondary-cta-btn px-6 py-3 rounded-no font-semibold body-font"
+                  style="background-color: ${secondaryColor}; color: ${deepAccentColor}; border: 1px solid ${primaryColor}; font-size: ${baseSize * 0.98}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.12);"
+                  onclick="trackAnalytics('quiz_download_offer_click', { event_category: 'lead_magnet', event_label: 'are_sugar_flowers_right' }); window.open('https://kelsiecakes.com/are-sugar-flowers-right-for-me', '_blank', 'noopener,noreferrer')">
+                  Get the Free Download
+                </button>
+              </div>
+            ` : ''}
+
               <div class="rounded-lg p-8 mb-8" style="background-color: ${surfaceColor}; border: 2px solid ${mutedColor};">
                 <h4 class="mb-3 text-center heading-font" style="font-size: ${baseSize * 1.28}px; font-weight: 500; color: ${textColor};">${config.email_prompt || defaultConfig.email_prompt}</h4>
                 <p class="mb-6 text-center body-font" style="font-size: ${baseSize * 0.88}px; color: ${mutedColor}; opacity: 0.85; line-height: 1.4;">I’ll send your results + helpful tips. Unsubscribe anytime.</p>
