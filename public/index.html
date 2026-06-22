@@ -560,6 +560,10 @@
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
           : null;
 
+        const estimatorCta = resultKey === 'fullyCustom'
+          ? { label: 'Get a price estimate →', href: '/estimate' }
+          : null;
+
         const resultImages = {
           readyToShip: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Your_Result_Ready_to_Ship_Sugar_Flowers.png?v=1767710547',
           madeToOrder: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Your_Result_Individual_Semi_Custom_Sugar_Flowers.png?v=1767710648',
@@ -630,6 +634,14 @@
                 onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
                 ${primaryCtaText}
               </button>
+              ${estimatorCta ? `
+                <button
+                  class="secondary-cta-btn px-6 py-3 rounded-no font-semibold mb-2 w-full sm:w-auto body-font"
+                  style="background-color: ${secondaryColor}; color: ${deepAccentColor}; border: 1px solid ${primaryColor}; font-size: ${baseSize * 0.98}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.12);"
+                  onclick="trackAnalytics('quiz_cta_click', { event_category: 'quiz', event_label: 'estimator_from_fully_custom' }); window.location.href='${estimatorCta.href}';">
+                  ${estimatorCta.label}
+                </button>
+              ` : ''}
               ${secondaryCta ? `
                 <button
                   class="secondary-cta-btn px-6 py-3 rounded-no font-semibold mb-2 w-full sm:w-auto body-font"
