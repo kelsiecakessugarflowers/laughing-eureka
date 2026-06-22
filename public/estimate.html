@@ -647,10 +647,11 @@
     </table>
 
     <div class="next-step">
-      <p>Love what you see? Use the inquiry form below to send me your details and pick your package. I'll follow up personally with an exact quote designed around your cake.</p>
+      <p>Love what you see? Fill out the inquiry form and I'll follow up personally with an exact quote designed around your cake.</p>
     </div>
 
     <div class="cta-row">
+      <a href="https://kelsiecakes.com/inquire-here" class="btn-primary" target="_blank" rel="noopener noreferrer">Start your inquiry →</a>
       <button type="button" class="btn-secondary" id="restartBtn">Start over</button>
     </div>
   </div>
@@ -813,9 +814,8 @@ const CONFIG = {
     const closestPackage = closestCheckpoint(score);
     const basePrice = closestPackage.price;
 
-    // Generate range as ±10% around the actual package price
-    const bufferAmount = basePrice * 0.10;
-    let low = Math.round((basePrice - bufferAmount) / 25) * 25;
+    const bufferAmount = basePrice * CONFIG.estimateRangeFraction;
+    let low = Math.max(CONFIG.minimumPrice, Math.round((basePrice - bufferAmount) / 25) * 25);
     let high = Math.round((basePrice + bufferAmount) / 25) * 25;
 
     document.getElementById('resultRange').textContent = `$${low.toLocaleString()}–$${high.toLocaleString()}`;
