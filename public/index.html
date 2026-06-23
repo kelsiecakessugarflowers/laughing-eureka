@@ -560,8 +560,18 @@
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
           : null;
 
-        const estimatorCta = resultKey === 'fullyCustom'
-          ? { label: 'Get a price estimate →', href: '/estimate' }
+        const estimatorCtaHref = resultKey === 'fullyCustom'
+          ? '/estimate?' + new URLSearchParams({
+              result: 'fullyCustom',
+              timeline: answers.timeline?.value || '',
+              role: answers.role?.value || '',
+              experience: answers.experience?.value || '',
+              customization: answers.customization?.value || '',
+              budget: answers.budget?.value || ''
+            }).toString()
+          : null;
+        const estimatorCta = estimatorCtaHref
+          ? { label: 'Get a price estimate →', href: estimatorCtaHref }
           : null;
 
         const inquiryUrl = resultKey === 'fullyCustom'

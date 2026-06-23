@@ -740,6 +740,14 @@ const CONFIG = {
 
   const FILLOUT_URL = 'https://kelsiecakes.fillout.com/t/6sqeBeZ6Xaus';
 
+  // Capture any quiz params passed in the URL (when arriving from the quiz CTA)
+  const quizParams = {};
+  const searchParams = new URLSearchParams(window.location.search);
+  ['result', 'timeline', 'role', 'experience', 'customization', 'budget'].forEach(function(key) {
+    const val = searchParams.get(key);
+    if (val) quizParams[key] = val;
+  });
+
   const form = document.getElementById('estimateForm');
   const nextBtn = document.getElementById('nextBtn');
   const resultSection = document.getElementById('resultSection');
@@ -883,14 +891,14 @@ const CONFIG = {
     });
 
     const rangeText = `$${low.toLocaleString()}–$${high.toLocaleString()}`;
-    const params = new URLSearchParams({
+    const params = new URLSearchParams(Object.assign({
       weddingDate: data.weddingDate || '',
       tiers: data.tiers || '',
       design: data.design || '',
       flowers: data.flowers || '',
       package: closestPackage.name,
       estimate: rangeText
-    });
+    }, quizParams));
     inquiryBtn.onclick = function() {
       trackAnalytics('estimator_inquiry_click', { package: closestPackage.name, estimate: rangeText });
       window.open(FILLOUT_URL + '?' + params.toString(), '_blank', 'noopener,noreferrer');
