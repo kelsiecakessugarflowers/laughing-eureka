@@ -651,7 +651,7 @@
     </div>
 
     <div class="cta-row">
-      <button type="button" class="btn-primary" onclick="window.open('https://kelsiecakes.com/inquire-here', '_blank', 'noopener,noreferrer')">Start your inquiry →</button>
+      <button type="button" class="btn-primary" id="inquiryBtn">Start your inquiry →</button>
       <button type="button" class="btn-secondary" id="restartBtn">Start over</button>
     </div>
   </div>
@@ -721,9 +721,29 @@ const CONFIG = {
 /* ===================== END CONFIG ===================== */
 
 (function() {
+  function trackAnalytics(eventName, payload) {
+    payload = payload || {};
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', eventName, payload);
+    } else if (Array.isArray(window.dataLayer)) {
+      window.dataLayer.push(Object.assign({ event: eventName }, payload));
+    }
+    if (window !== window.parent) {
+      try {
+        window.parent.postMessage(
+          Object.assign({ type: 'estimator_analytics', event: eventName }, payload),
+          '*'
+        );
+      } catch (e) {}
+    }
+  }
+
+  const FILLOUT_URL = 'https://kelsiecakes.fillout.com/t/6sqeBeZ6Xaus';
+
   const form = document.getElementById('estimateForm');
   const nextBtn = document.getElementById('nextBtn');
   const resultSection = document.getElementById('resultSection');
+  const inquiryBtn = document.getElementById('inquiryBtn');
 
   // ---- Validation ----
   function setFieldError(groupId, errorId, isValid) {
@@ -861,6 +881,22 @@ const CONFIG = {
       tr.innerHTML = `<th scope="row">${k}</th><td>${v}</td>`;
       tbody.appendChild(tr);
     });
+
+    const rangeText = `$${low.toLocaleString()}–$${high.toLocaleString()}`;
+    const params = new URLSearchParams({
+      weddingDate: data.weddingDate || '',
+      tiers: data.tiers || '',
+      design: data.design || '',
+      flowers: data.flowers || '',
+      package: closestPackage.name,
+      estimate: rangeText
+    });
+    inquiryBtn.onclick = function() {
+      trackAnalytics('estimator_inquiry_click', { package: closestPackage.name, estimate: rangeText });
+      window.open(FILLOUT_URL + '?' + params.toString(), '_blank', 'noopener,noreferrer');
+    };
+
+    trackAnalytics('estimator_result', { package: closestPackage.name, estimate: rangeText });
 
     resultSection.style.display = 'block';
     const heading = document.getElementById('resultHeading');

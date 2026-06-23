@@ -564,6 +564,17 @@
           ? { label: 'Get a price estimate →', href: '/estimate' }
           : null;
 
+        const inquiryUrl = resultKey === 'fullyCustom'
+          ? 'https://kelsiecakes.fillout.com/t/6sqeBeZ6Xaus?' + new URLSearchParams({
+              result: 'fullyCustom',
+              timeline: answers.timeline || '',
+              role: answers.role || '',
+              experience: answers.experience || '',
+              customization: answers.customization || '',
+              budget: answers.budget || ''
+            }).toString()
+          : result.emailContent.shopLink;
+
         const resultImages = {
           readyToShip: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Your_Result_Ready_to_Ship_Sugar_Flowers.png?v=1767710547',
           madeToOrder: 'https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Your_Result_Individual_Semi_Custom_Sugar_Flowers.png?v=1767710648',
@@ -631,7 +642,7 @@
               <button
                 class="primary-cta-btn px-8 py-4 rounded-no font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-                onclick="window.open('${result.emailContent.shopLink}', '_blank', 'noopener,noreferrer')">
+                onclick="window.open(${JSON.stringify(inquiryUrl)}, '_blank', 'noopener,noreferrer')">
                 ${primaryCtaText}
               </button>
               ${estimatorCta ? `
