@@ -567,11 +567,11 @@
         const inquiryUrl = resultKey === 'fullyCustom'
           ? 'https://kelsiecakes.fillout.com/t/6sqeBeZ6Xaus?' + new URLSearchParams({
               result: 'fullyCustom',
-              timeline: answers.timeline || '',
-              role: answers.role || '',
-              experience: answers.experience || '',
-              customization: answers.customization || '',
-              budget: answers.budget || ''
+              timeline: answers.timeline?.value || '',
+              role: answers.role?.value || '',
+              experience: answers.experience?.value || '',
+              customization: answers.customization?.value || '',
+              budget: answers.budget?.value || ''
             }).toString()
           : result.emailContent.shopLink;
 
@@ -642,7 +642,7 @@
               <button
                 class="primary-cta-btn px-8 py-4 rounded-no font-semibold mb-4 w-full sm:w-auto body-font"
                 style="background-color: ${primaryColor}; color: #ffffff; font-size: ${baseSize * 1.1}px; box-shadow: 0 6px 18px rgba(75, 44, 56, 0.18);"
-                onclick="window.open(${JSON.stringify(inquiryUrl)}, '_blank', 'noopener,noreferrer')">
+                onclick="window.open('${inquiryUrl}', '_blank', 'noopener,noreferrer')">
                 ${primaryCtaText}
               </button>
               ${estimatorCta ? `
