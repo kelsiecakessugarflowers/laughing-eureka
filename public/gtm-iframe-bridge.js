@@ -95,7 +95,7 @@
     // Fast path: ignore anything that isn't a quiz analytics message.
     // This exits before the origin check to avoid unnecessary work for
     // the many non-quiz postMessage events present on any page.
-    if (!data || data.type !== 'quiz_analytics' || !data.event) {
+    if (!data || (data.type !== 'quiz_analytics' && data.type !== 'estimator_analytics') || !data.event) {
       return;
     }
 
