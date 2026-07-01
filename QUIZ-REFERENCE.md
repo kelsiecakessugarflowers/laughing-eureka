@@ -62,17 +62,20 @@ This document is a plain-English reference for the current quiz logic and conten
 - **Primary CTA destination:** https://sugarflowersonline.com/collections/all
 
 ## 2) Made to Order Sugar Flowers
-- **Summary:** Custom-colored individual flowers made for pros who already know the flowers they need.
-- **Best for:** Bakers who want their chosen flowers in exact colors with a planned lead time.
+- **Summary:** Made to order sugar flowers exclusive to bakeries and cake shops — individual varieties ordered by the stem in standardized production colors, for bakers who want to order directly without back-and-forth design work.
+- **Best for:** Bakers who know what they need and want to order directly — more economical than custom orders, with the flexibility to plan ahead and keep favorites on hand.
 - **What You Get:**
-  - Lead time: Minimum 6 weeks, made fresh for your order
-  - Customization: Choose the flower types and colors you need
-  - Support: Optional guides for pro placement
-  - Durability: Made well in advance so they're ready when you are
+  - Individual varieties of flowers and foliage ordered by the stem
+  - Standardized production colors (no custom color matching through this channel)
+  - Lead time: 6 weeks, no rush available
   - Order minimum: $150
+  - Optional upsell: styling guides for placement and design
 - **Upsell:** Did you know? Your order includes access to Styling Toolkit for design ideas, layout tips, and checklists.
-- **Next step copy:** Choose your flowers and colors, and we'll make them to order for you.
-- **Primary CTA destination:** https://kelsiecakes.com/shop-all/
+- **Custom color note:** Need custom colors or a fully designed arrangement? That goes through the custom order process instead. Inquire here → https://kelsiecakes.com/inquire-here
+- **Eligibility note:** Exclusive to licensed businesses — bakeries, caterers, hotels/venues, cottage bakeries, and restaurants. Must apply ahead of time for access to log in and shop. Trade pricing includes discounts compared to custom and ready-to-ship orders, but does not come with 1:1 troubleshooting or design assistance.
+- **Next step copy:** Ready to order? Apply for a trade account to get access to the shop.
+- **Primary CTA:** Apply for a Trade Account → https://kelsiecakes.com/my-account/
+- **Secondary CTA:** Log in to Shop → https://kelsiecakes.com/my-account/
 
 ## 3) Curated Sugar Flower Arrangements
 - **Summary:** Coordinated flower sets that deliver a styled, done-for-you look for your cake.
@@ -120,7 +123,7 @@ Depending on role + final result, the quiz appends a role-specific sentence on t
 
 ### Baker
 - Ready to Ship: “You can pop these on a cake fast. Minimal fuss, maximum payoff.”
-- Made to Order: “You choose the flower types; I’ll make them in your palette.”
+- Made to Order: “Order exactly what you need, by the stem, in standardized colors — no back-and-forth required.”
 - Curated: “You want a great look without designing from scratch. Love that for you.”
 - Fully Custom: “If you want a hero arrangement and you don’t want to think about it, this is the move.”
 
