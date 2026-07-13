@@ -34,6 +34,15 @@
  *   quiz_start   — visitor clicks "Start Quiz"
  *   quiz_answer  — visitor selects an answer  (includes question_id, answer_value)
  *   quiz_result  — result screen shown         (includes event_label with result key)
+ *
+ * ─── DEBUG ────────────────────────────────────────────────────────────
+ *   Set window.QUIZ_BRIDGE_DEBUG = true before this script to enable
+ *   console logging at every validation step. Useful for diagnosing why
+ *   events are not reaching dataLayer.
+ *
+ *   Example (add before the bridge <script> tag):
+ *
+ *     <script>window.QUIZ_BRIDGE_DEBUG = true;</script>
  */
 
 (function () {
@@ -43,6 +52,12 @@
   //
   // Origins are lowercased and trailing slashes stripped so that
   // "https://example.com" and "https://example.com/" match equally.
+
+  var debug = !!(window.QUIZ_BRIDGE_DEBUG);
+
+  function dbg(msg) {
+    if (debug) { console.log('[quiz-bridge] ' + msg); }
+  }
 
   function normalizeOrigin(raw) {
     return String(raw).toLowerCase().replace(/\/+$/, '');
@@ -74,6 +89,10 @@
     }
   }
 
+  if (debug) {
+    console.log('[quiz-bridge] Debug mode ON. Trusted origins:', trustedOrigins.slice());
+  }
+
   // Warn once at setup if no origins are configured.
   // Placed here (not inside the handler) to avoid console spam if an
   // attacker floods the bridge with messages.
@@ -96,6 +115,7 @@
     // This exits before the origin check to avoid unnecessary work for
     // the many non-quiz postMessage events present on any page.
     if (!data || data.type !== 'quiz_analytics' || !data.event) {
+      dbg('Skipping non-quiz message (type=' + (data && data.type) + ')');
       return;
     }
 
@@ -110,6 +130,7 @@
     var incomingOrigin = event.origin;
 
     if (!incomingOrigin || incomingOrigin === 'null') {
+      dbg('Rejected: null/sandboxed origin');
       return;
     }
 
@@ -124,7 +145,7 @@
     }
 
     if (!originTrusted) {
-      // Reject silently — no per-message logging to avoid console spam.
+      dbg('Rejected: untrusted origin "' + normalizedIncoming + '". Trusted: [' + trustedOrigins.join(', ') + ']');
       return;
     }
 
@@ -160,8 +181,7 @@
     }
 
     if (!sourceIsKnownIframe) {
-      // Correct origin but not from an iframe — likely a script calling
-      // postMessage directly. Reject silently.
+      dbg('Rejected: source is not a known iframe in this page');
       return;
     }
 
@@ -176,6 +196,7 @@
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(push);
+    dbg('Forwarded to dataLayer: ' + JSON.stringify(push));
   });
 
 })();
