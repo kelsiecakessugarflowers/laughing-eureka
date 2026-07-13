@@ -81,7 +81,7 @@
     console.warn(
       '[quiz-bridge] No trusted origins configured. ' +
       'Quiz analytics will NOT be forwarded to dataLayer. ' +
-      "Set window.QUIZ_TRUSTED_ORIGINS = ['https://your-quiz-domain.com'] " +
+      "Set window.QUIZ_TRUSTED_ORIGINS = ['https://quiz.kelsiecakes.com'] " +
       'before this script tag, or add a data-quiz-origin attribute to the ' +
       '<script> tag. See the file header for full instructions.'
     );
