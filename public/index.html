@@ -200,21 +200,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       },
       madeToOrder: {
         icon: '🌺',
-        summary: 'Custom-colored individual flowers made for pros who already know the flowers they need.',
-        bestFor: 'Bakers who want their chosen flowers in exact colors with a planned lead time.',
+        summary: 'Made to order sugar flowers exclusive to bakeries and cake shops — individual varieties ordered by the stem in standardized production colors, for bakers who want to order directly without back-and-forth design work.',
+        bestFor: 'Bakers who know what they need and want to order directly — more economical than custom orders, with the flexibility to plan ahead and keep favorites on hand.',
         features: [
-          'Lead time: Minimum 6 weeks, made fresh for your order',
-          'Customization: Choose the flower types and colors you need',
-          'Support: Optional guides for pro placement',
-          "Durability: Made well in advance so they're ready when you are",
-          'Order minimum: $150'
+          'Individual varieties of flowers and foliage ordered by the stem',
+          'Standardized production colors (no custom color matching through this channel)',
+          'Lead time: 6 weeks, no rush available',
+          'Order minimum: $150',
+          'Optional upsell: styling guides for placement and design'
         ],
         upsell: '💡 Did you know? Your order includes access to <a href="https://thevault.kelsiecakes.com/products/courses/view/1185413" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Styling Toolkit</a> for design ideas, layout tips, and checklists.',
-        nextStep: 'Choose your flowers and colors, and we\'ll make them to order for you.',
+        customColorNote: 'Need custom colors or a fully designed arrangement? That goes through the custom order process instead. <a href="https://kelsiecakes.com/inquire-here" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Inquire here</a>.',
+        eligibilityNote: 'This is exclusive to licensed businesses — bakeries, caterers, hotels/venues, cottage bakeries, and restaurants. Apply ahead of time for access to log in and shop. Trade pricing includes discounts compared to custom and ready-to-ship orders, though it does not come with 1:1 troubleshooting or design assistance.',
+        nextStep: 'Ready to order? Apply for a trade account to get access to the shop.',
         emailContent: {
-          shopLink: 'https://kelsiecakes.com/shop-all/',
-          reassurance: 'You know your flowers — we\'ll make them perfectly in your colors with a 6-week lead time.',
-          cta: 'Explore Made to Order options and customize the colors to match your vision.'
+          shopLink: 'https://kelsiecakes.com/my-account/',
+          reassurance: 'Once you have trade access, you can order your favorite stems by the variety with a 6-week lead time.',
+          cta: 'Apply for a Trade Account to get access to the Made to Order shop.'
         }
       },
       curated: {
@@ -327,7 +329,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const blurbs = {
         baker: {
           readyToShip: "You can pop these on a cake fast. Minimal fuss, maximum payoff.",
-          madeToOrder: "You choose the flower types; I’ll make them in your palette.",
+          madeToOrder: "Order exactly what you need, by the stem, in standardized colors — no back-and-forth required.",
           curated: "You want a great look without designing from scratch. Love that for you.",
           fullyCustom: "If you want a hero arrangement and you don’t want to think about it, this is the move."
         },
@@ -565,10 +567,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         const primaryCtaText = resultKey === 'fullyCustom'
           ? 'Fill out the form to check availability'
+          : resultKey === 'madeToOrder'
+          ? 'Apply for a Trade Account'
           : `View ${titleMap[resultKey]} Options`;
 
         const secondaryCta = resultKey === 'fullyCustom'
           ? { label: 'Schedule a call', href: 'https://kelsiecakes.com/call/' }
+          : resultKey === 'madeToOrder'
+          ? { label: 'Log in to Shop', href: 'https://kelsiecakes.com/my-account/' }
           : null;
 
         const resultImages = {
@@ -630,6 +636,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             ${result.upsell ? `
               <div class="rounded-lg p-6 mb-8" style="background-color: ${secondaryColor}; border-left: 4px solid ${primaryColor};">
                 <p class="body-font" style="font-size: ${baseSize * 1.02}px; color: ${textColor}; line-height: 1.6; font-weight: 400;">${result.upsell}</p>
+              </div>
+            ` : ''}
+
+            ${result.customColorNote ? `
+              <div class="rounded-lg p-6 mb-8" style="background-color: ${surfaceColor}; border: 1px dashed ${mutedColor};">
+                <p class="body-font" style="font-size: ${baseSize * 1.02}px; color: ${textColor}; line-height: 1.6; font-weight: 400;">${result.customColorNote}</p>
+              </div>
+            ` : ''}
+
+            ${result.eligibilityNote ? `
+              <div class="rounded-lg p-6 mb-8" style="background-color: ${surfaceColor}; border: 1px solid ${secondaryColor};">
+                <p class="body-font" style="font-size: ${baseSize * 0.92}px; color: ${mutedColor}; line-height: 1.6; font-weight: 400;">${result.eligibilityNote}</p>
               </div>
             ` : ''}
 
