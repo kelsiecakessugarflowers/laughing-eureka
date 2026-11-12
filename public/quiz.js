@@ -180,14 +180,54 @@ function renderResult() {
 }
 
 // Spam check on the email form (Turnstile; same site key as the estimator)
-let tsScript = false;
+let tsScript = false, onToken = null;   // onToken: a pending Airtable save waiting for a fresh token
+const tsQueue = [];
+function withTurnstile(fn) {
+  if (window.turnstile?.render) return fn();
+  tsQueue.push(fn);
+  if (tsScript) return; tsScript = true;
+  window.onTurnstileLoad = () => tsQueue.splice(0).forEach(f => f());
+  const s = document.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit'; s.async = true; document.head.appendChild(s);
+}
+const tokenSink = tok => { tsToken = tok; if (onToken && tok) { const f = onToken; onToken = null; f(tok); } };
 function loadTurnstile() {
   const key = D.inquiry?.turnstileSiteKey; if (!key) return;
-  const draw = () => { if ($('#ts')) tsWidget = window.turnstile.render('#ts', {sitekey: key, callback: tok => { tsToken = tok; }, 'expired-callback': () => { tsToken = ''; }}); };
-  if (window.turnstile?.render) return draw();
-  window.onTurnstileLoad = draw;
-  if (tsScript) return; tsScript = true;
-  const s = document.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit'; s.async = true; document.head.appendChild(s);
+  withTurnstile(() => { if ($('#ts')) tsWidget = window.turnstile.render('#ts', {sitekey: key, callback: tokenSink, 'expired-callback': () => { tsToken = ''; }}); });
+}
+
+// ---- Saving to Airtable "Quiz Leads" ----
+// The results email and the Airtable copy are sent separately. If the email goes out but the save fails, the visitor
+// still sees success, and the save is retried: twice right away with a fresh spam-check token, then on their next
+// visit (kept in this browser). Each spam-check token works only once, which is why a retry needs a new one.
+const PENDING_KEY = 'kc_quiz_lead_pending';
+const store = {
+  get: () => { try { return JSON.parse(localStorage.getItem(PENDING_KEY) || 'null'); } catch (e) { return null; } },
+  set: v => { try { v ? localStorage.setItem(PENDING_KEY, JSON.stringify(v)) : localStorage.removeItem(PENDING_KEY); } catch (e) {} },
+};
+const saveLead = (lead, token) => fetch(ESTIMATOR + '/api/quiz-lead', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({...lead, turnstile: token})})
+  .then(r => r.ok).catch(() => false);
+// Get a new token from a widget (the form's, or a small one that only shows itself if Turnstile needs a click)
+function freshToken(widget) {
+  return new Promise(resolve => {
+    if (!D.inquiry?.turnstileSiteKey) return resolve('');
+    const timer = setTimeout(() => { onToken = null; resolve(null); }, 30000);
+    onToken = tok => { clearTimeout(timer); resolve(tok); };
+    withTurnstile(() => {
+      if (widget !== null && widget !== undefined) { tsToken = ''; window.turnstile.reset(widget); return; }
+      let box = $('#tsRetry'); if (!box) { box = document.createElement('div'); box.id = 'tsRetry'; $('#footer').before(box); }
+      window.turnstile.render(box, {sitekey: D.inquiry.turnstileSiteKey, appearance: 'interaction-only', callback: tokenSink});
+    });
+  });
+}
+async function retrySave(lead, widget, tries) {
+  for (let i = 0; i < tries; i++) {
+    const tok = await freshToken(widget);
+    if (tok === null) break;   // no token (Turnstile didn't load or needs a click nobody gave)
+    if (await saveLead(lead, tok)) { store.set(null); track('quiz_lead_saved_on_retry', {attempt: i + 1}); return true; }
+  }
+  store.set(lead);   // try again on their next visit
+  track('quiz_lead_unsaved', {event_label: lead.result});
+  return false;
 }
 
 async function submitEmail(e) {
@@ -203,14 +243,17 @@ async function submitEmail(e) {
   const base = {email, name, role: a('role'), experience: a('experience'), budget: a('budget'), timeline: a('timeline'), customization: a('customization'), result, tags: tg};
   // The existing results email (unchanged) and a row in Airtable "Quiz Leads", side by side
   const post = (url, body) => fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)}).then(r => r.ok).catch(() => false);
+  const lead = {...base, utmSource: new URLSearchParams(location.search).get('utm_source') || ''};
   const [mailed, saved] = await Promise.all([
     post(OLD_WEBHOOK, {...base, timestamp: new Date().toISOString()}),
-    post(ESTIMATOR + '/api/quiz-lead', {...base, turnstile: tsToken, utmSource: new URLSearchParams(location.search).get('utm_source') || ''}),
+    saveLead(lead, tsToken),
   ]);
   track('quiz_email', {event_label: result, emailed: mailed, saved});
   if (mailed) {   // the email comes from the existing worker; Airtable is a bonus copy
     say('ok', `<p style="margin:0 0 4px;font-weight:600">${esc(t('emailSuccess'))}</p><p style="margin:0">${esc(t('emailSuccessSub'))}</p>`);
-    ['name', 'email'].forEach(id => { $('#' + id).disabled = true; }); btn.hidden = true; $('#ts').hidden = true;
+    ['name', 'email'].forEach(id => { $('#' + id).disabled = true; }); btn.hidden = true;
+    if (saved) $('#ts').hidden = true;
+    else { store.set(lead); retrySave(lead, tsWidget, 2).then(ok => { if (ok) $('#ts').hidden = true; }); }   // email went out but Airtable didn't get it
   } else {
     say('err', esc(t('emailError'))); btn.disabled = false; btn.textContent = t('email_button_text');
     if (window.turnstile?.reset && tsWidget !== null) { window.turnstile.reset(tsWidget); tsToken = ''; }
@@ -242,4 +285,6 @@ Promise.all([
   QUESTIONS.find(q => q.id === 'budget').options = D.budgets.map(label => ({value: budgetClass(label), label, scores: BUDGET_SCORES[budgetClass(label)]}));
   document.title = t('pageTitle') || document.title;
   loadGtm(D.gtmId); footer(); renderIntro();
+  // A signup from an earlier visit that never reached Airtable: try once more
+  const pending = store.get(); if (pending?.email) retrySave(pending, null, 1);
 });
