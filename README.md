@@ -10,7 +10,7 @@ It looks and behaves like the Price Estimator (estimator.kelsiecakes.com) and fo
 | `copy.json` | **All the wording.** Edit it on GitHub: pencil icon, change the text between the quotes, commit. |
 | `quiz.js` | Questions, scoring, results, email form, analytics |
 | `index.html` | Page layout and styles (same look as the estimator) |
-| `brand.css`, `logo-main.svg`, `logo-alt.svg`, `favicon.png` | Brand files, copied from the estimator |
+| `brand.css`, `logo-alt.svg`, `favicon.png` | Brand files, copied from the estimator |
 | `gtm-iframe-bridge.js` | For the Showit page that embeds the quiz: forwards quiz events to the site's Google Tag Manager |
 
 ## Changing the wording
