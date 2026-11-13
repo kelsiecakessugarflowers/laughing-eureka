@@ -1,223 +1,56 @@
-# Wedding Cake Topper Quiz (Kelsie Cakes)
+# Sugar Flower Match quiz (quiz.kelsiecakes.com)
 
-This is a lightweight, single-file quiz that recommends the best “cake topper / sugar flower” path for a visitor and (optionally) collects their email + quiz metadata for follow-up.
+Five questions that point a visitor to the right offer: **Ready to Ship**, **Made to Order**, **Curated** or **Fully Custom**.
+It looks and behaves like the Price Estimator (estimator.kelsiecakes.com) and follows the same rules.
 
-It’s designed to:
-- Help people choose the right offer (Ready to Ship / Made to Order / Curated / Fully Custom)
-- Reduce decision fatigue
-- Tag/segment people cleanly for email automations
-- Track basic analytics (answers + final result)
+## Files (all in `public/`)
 
----
+| File | What it is |
+|---|---|
+| `copy.json` | **All the wording.** Edit it on GitHub: pencil icon, change the text between the quotes, commit. |
+| `quiz.js` | Questions, scoring, results, email form, analytics |
+| `index.html` | Page layout and styles (same look as the estimator) |
+| `brand.css`, `logo-alt.svg`, `favicon.png` | Brand files, copied from the estimator |
+| `gtm-iframe-bridge.js` | For the Showit page that embeds the quiz: forwards quiz events to the site's Google Tag Manager |
 
-## What this quiz does (high level)
+## Changing the wording
 
-1. **Shows intro screen** → “Start Quiz”
-2. **Asks 5 questions**
-   - role
-   - timeline
-   - experience
-   - customization
-   - budget
-3. **Scores answers** + applies guardrails
-4. **Displays a single result**
-5. **CTA button** opens the recommended shop/offer page
-6. **Email capture form** saves a submission via `dataSdk.create()` with tags
+- Questions are `q_<question>` and their answers `opt_<question>_<answer>`. Budget answers come from the estimator's budget list.
+- Each result has `<result>_title`, `_summary`, `_bestFor`, `_features` (a list), `_upsell`, `_nextStep`, `_cta`.
+  Results are `readyToShip`, `madeToOrder`, `curated`, `fullyCustom`.
+- `blurb_<role>_<result>` is the extra line after "Best for" for that role.
+- `[Styling Toolkit](https://...)` makes a link. `{minPrice}` and `{minWeeks}` are filled in from the estimator.
 
----
+## Rules (shared with the estimator)
 
-## Key files / structure
+The quiz reads `https://estimator.kelsiecakes.com/data.json` on load, so these stay in step automatically:
+lead times, the budget choices, the custom starting price (cheapest live package), and the spam-check key.
 
-This is currently a **single HTML file** with embedded JS.
+- Budget **under $350** or wedding **less than 3 weeks** away: Ready to Ship (the estimator sends these to the shop too).
+- **3-6 weeks** away: Fully Custom as a rush if the budget allows custom and they don't want existing designs, otherwise Ready to Ship
+  (Made to Order and Curated need 6 weeks).
+- Fully Custom needs a budget at or above the custom starting price ($500 now), or "Not sure yet".
+- High budget, 6-12 weeks, wants something unique: Fully Custom.
+- "Open to your existing designs" never goes to Fully Custom. Only bakers (not brand new to sugar flowers) get Made to Order.
+- Otherwise the highest score wins; ties go Fully Custom > Curated > Made to Order > Ready to Ship.
 
-Main moving parts:
-- `defaultConfig` → design + editable text defaults (for Element SDK edit panel)
-- `questions[]` → the quiz questions and their scoring
-- `results{}` → result copy + features + links
-- `calculateResult()` → scoring + routing logic
-- `renderIntro()` / `renderQuiz()` → UI rendering
-- `handleEmailSubmit()` → saves email + quiz metadata + tags
-- `trackAnalytics()` → pushes events to GA (`gtag`) or GTM (`dataLayer`)
-- `elementSdk` → supports visual editor config overrides
-- `dataSdk` → saves quiz submissions
+The **Fully Custom** button opens the estimator with their role, occasion (Wedding) and budget already filled in (`utm_source=quiz`).
 
----
+## Email results
 
-## How scoring works (the “brain”)
+"Send Me My Results" does two things at once:
+1. Posts to the existing results worker (`tiny-rain-7a6b`), unchanged, which sends the email.
+2. Saves a row in Airtable **Quiz Leads** (through the estimator's `/api/quiz-lead`, with the same "Verify you are human" check).
 
-### Base scoring
-Each answer option includes a `scores` object like:
+Tags sent with both: `role_*`, `experience_*`, `timeline_*` (urgent = under 3 weeks, rush = 3-6 weeks, soon, planning, longterm),
+`customization_*`, `budget_*` (low, medium, high, premium, unsure), `quiz_result_*`.
 
-```js
-scores: { readyToShip: 1, madeToOrder: 3, curated: 1, fullyCustom: 2 }
-All selected answers add up into a total score per result bucket.
+## Analytics
 
-Guardrails (rules that override pure scoring)
+Events: `quiz_start`, `quiz_answer` (question_id, answer_value), `quiz_result` (event_label = result), `quiz_cta`, `quiz_email`.
+Opened directly, they go to this page's GTM (GTM-5ZMBM3M). Inside the Showit iframe they're posted to the parent page,
+where `gtm-iframe-bridge.js` forwards them.
 
-Inside calculateResult():
-	1.	Urgent timeline
+## Hosting
 
-	•	If timeline is urgent (< 6 weeks) → force readyToShip
-
-	2.	High budget + short timeline + not “existing designs”
-
-	•	If budget is high and timeline is soon and customization is NOT existing
-→ force fullyCustom
-
-	3.	Customization = existing designs
-
-	•	If customization is existing, do NOT send to Fully Custom
-	•	If role isn’t baker → only consider RTS + Curated
-	•	If role is baker → consider RTS + MTO + Curated
-
-	4.	Made to Order restriction
-
-	•	Only bakers/cake decorators can be routed into madeToOrder
-	•	If role isn’t baker, MTO is removed from the eligible pool
-
-Tie-break priority
-
-If scores tie, priority order is:
-	1.	fullyCustom
-	2.	curated
-	3.	madeToOrder
-	4.	readyToShip
-
-This is controlled inside pickFromScores().
-
-⸻
-
-Tags + segmentation (IMPORTANT)
-
-Email submissions include clean tags so automations can do their job without weird guesswork.
-
-Tags are generated in:
-
-getSegmentationTags(resultKey)
-
-It adds:
-	•	role_baker | role_vendor | role_couple | role_family
-	•	experience_pro | experience_amateur | experience_novice
-	•	timeline_urgent | timeline_soon | timeline_planning | timeline_longterm
-	•	customization_custom | customization_existing | customization_adjusted
-	•	budget_low | budget_medium | budget_high | budget_unsure
-	•	quiz_result_readyToShip | quiz_result_madeToOrder | quiz_result_curated | quiz_result_fullyCustom
-
-Submission object stored via dataSdk.create() includes:
-	•	email
-	•	result
-	•	timestamp
-	•	role/timeline/experience/customization/budget
-	•	tags (comma-separated string)
-
-⸻
-
-Analytics events
-
-trackAnalytics() sends events to:
-	•	GA4 via window.gtag if available
-	•	Otherwise GTM via window.dataLayer
-
-Tracked events:
-	•	quiz_answer
-	•	question_id
-	•	answer_value
-	•	quiz_result
-	•	event_label = final resultKey
-
-(If future me wants deeper data: add email submit success/fail events in handleEmailSubmit().)
-
-⸻
-
-Editing copy & links (where to look)
-
-Quiz text
-	•	Intro title/subtitle: defaultConfig.quiz_title, defaultConfig.quiz_subtitle
-	•	Result titles: defaultConfig.ready_to_ship_title, etc.
-
-Questions
-
-Edit in questions[]:
-	•	question text
-	•	options[] text/value
-	•	scoring per option
-
-Results (offer cards)
-
-Edit in results{}:
-	•	description
-	•	durability
-	•	clarifier
-	•	features[]
-	•	upsell
-	•	nextStep
-	•	emailContent.shopLink, reassurance, cta
-
-Links per offer:
-	•	RTS → https://kelsiecakes.com/ready-to-ship
-	•	MTO → https://kelsiecakes.com/made-to-order
-	•	Curated → https://kelsiecakes.com/curated
-	•	Fully Custom → https://kelsiecakes.com/fully-custom
-
-⸻
-
-UI + styling notes
-	•	Tailwind is loaded, but most styling is done via template strings + inline style variables.
-	•	Hover states are applied using event listeners (not inline onmouseover).
-	•	Fonts:
-	•	headings: Source Serif 4
-	•	body: Raleway
-
-Color variables used inside renderQuiz() / renderIntro():
-	•	background / surface / text / primary / secondary come from config (Element SDK)
-	•	accent colors are local constants:
-	•	accentColor = #D4A574
-	•	deepAccentColor = #492C38
-	•	mutedColor = #5A524E
-	•	softHighlight = #FAF7F4
-
-⸻
-
-SDK dependencies
-
-elementSdk
-
-Used for:
-	•	live config editing (colors, font, sizes, labels)
-	•	calling onConfigChange(newConfig)
-	•	mapToCapabilities() defines which fields are editable in the panel
-	•	mapToEditPanelValues() defines text fields shown in editor
-
-dataSdk
-
-Used for:
-	•	initializing with dataHandler
-	•	creating submissions with dataSdk.create(submission)
-
-If dataSdk.init() fails, quiz still runs — but email submissions won’t save.
-
-⸻
-
-Troubleshooting (fast)
-
-Email submit “does nothing”
-	•	Check window.dataSdk exists
-	•	Check dataSdk.init() succeeds in init()
-	•	Check console for SDK errors
-
-Wrong results being returned
-	•	Inspect calculateResult()
-	•	Confirm scoring weights inside questions[]
-	•	Confirm guardrails aren’t overriding what you expect
-
-Tags look wrong
-	•	Check getSegmentationTags(resultKey)
-	•	Confirm answers contains values for each question id
-
-⸻
-
-Future improvements (nice-to-haves)
-	•	Role-aware timeline question text (“event date/delivery date” for vendors/bakers)
-	•	Track email submit success/fail as analytics events
-	•	Add a safe fallback for missing emailContent.shopLink
-	•	Make “we/our” language consistent with brand voice (me/I/my)
+Cloudflare Worker `quiz` serving `public/` (wrangler.jsonc). Pushing to `main` redeploys.

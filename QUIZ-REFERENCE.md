@@ -1,5 +1,8 @@
 # Wedding Sugar Flower Quiz — Internal Reference
 
+> **Out of date since the estimator-aligned update.** The live wording is in `public/copy.json`, and the rules are in `README.md`.
+> Timeline now has "Less than 3 weeks" and "3-6 weeks" answers, and the budget answers are the estimator's.
+
 This document is a plain-English reference for the current quiz logic and content so you can review the full experience without retaking the quiz.
 
 ## Quiz at a Glance
