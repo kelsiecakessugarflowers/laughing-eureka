@@ -6,8 +6,8 @@
  * to window.dataLayer so Google Tag Manager picks them up automatically.
  *
  * SECURITY: Messages are only forwarded from explicitly trusted origins.
- * You MUST configure at least one trusted origin or no events will be
- * forwarded (a warning will appear in the browser console at page load).
+ * https://quiz.kelsiecakes.com and https://estimator.kelsiecakes.com are
+ * built in; the options below add more (for example a preview address).
  *
  * ─── CONFIGURATION ────────────────────────────────────────────────────
  *
@@ -48,7 +48,9 @@
     return String(raw).toLowerCase().replace(/\/+$/, '');
   }
 
-  var trustedOrigins = [];
+  // Kelsie Cakes tools are always trusted, so the Showit page needs no setup for them:
+  // the quiz, and the Price Estimator (estimator + packages collection embeds).
+  var trustedOrigins = ['https://quiz.kelsiecakes.com', 'https://estimator.kelsiecakes.com'];
 
   if (window.QUIZ_TRUSTED_ORIGINS && window.QUIZ_TRUSTED_ORIGINS.length) {
     // Option 1: array set by page author before this script tag.
@@ -77,7 +79,7 @@
   // Warn once at setup if no origins are configured.
   // Placed here (not inside the handler) to avoid console spam if an
   // attacker floods the bridge with messages.
-  if (trustedOrigins.length === 0) {
+  if (trustedOrigins.length === 0) {   // (can't happen now that the defaults above are built in; kept for safety)
     console.warn(
       '[quiz-bridge] No trusted origins configured. ' +
       'Quiz analytics will NOT be forwarded to dataLayer. ' +
