@@ -1,0 +1,145 @@
+{
+ "_how": "Ready to Ship designs the quiz can recommend. It picks the one matching their arrangement style first, then color palette, then cake tiers. styles: Cascading, Scattered, Focal Point, Bundles, Crown, Minimal, Maximalist. palettes: neutral, bold, soft, bright. Prices are typed here by hand (no Shopify sync); a sold-out design still links to its page for the waitlist/preorder.",
+ "shopUrl": "https://shop.kelsiecakes.com",
+ "discount": {
+  "code": "AMGVENXAT50H",
+  "percent": 15,
+  "_when": "Shown when their budget is Under $350 and the design costs more than that; the link applies the code automatically."
+ },
+ "designs": [
+  {
+   "handle": "gold-trimmed-sugar-flower-cake-cascade",
+   "title": "Gold Trimmed Classic Cascade",
+   "price": 360,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Gold_Trimmed_Classic_Cascade__White_and_Gold_Open_Rose_Sugar_Flower_Set_page4.png?v=1766046394",
+   "styles": [
+    "Cascading",
+    "Crown",
+    "Scattered",
+    "Maximalist"
+   ],
+   "palettes": [
+    "neutral"
+   ],
+   "minTiers": 2,
+   "maxTiers": 6,
+   "blurb": ""
+  },
+  {
+   "handle": "burgundy-trio-of-open-roses",
+   "title": "Burgundy and Gold Open Roses Bundle",
+   "price": 100,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/f49bbafb-small-trio-of-burgundy-gold-open-rose-sugar-flower-elegant-wedding-cake-topper-sugar-flowers-by-kelsie-cakes.webp?v=1763240945",
+   "styles": [
+    "Focal Point",
+    "Bundles",
+    "Scattered",
+    "Cascading"
+   ],
+   "palettes": [
+    "bold"
+   ],
+   "minTiers": 1,
+   "maxTiers": 3,
+   "blurb": ""
+  },
+  {
+   "handle": "navy-and-gold-open-rose-trio",
+   "title": "Navy and Gold Open Rose Trio",
+   "price": 110,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/c38104de-il_fullxfull.4571263055_cetn.jpg?v=1763229044",
+   "styles": [
+    "Focal Point",
+    "Bundles"
+   ],
+   "palettes": [
+    "bold"
+   ],
+   "minTiers": 1,
+   "maxTiers": 3,
+   "blurb": ""
+  },
+  {
+   "handle": "white-moth-orchid",
+   "title": "White Moth Orchid",
+   "price": 50,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/116C7698-AC14-4143-9901-31DDF1C1AB3A.png?v=1780611962",
+   "styles": [
+    "Minimal",
+    "Focal Point"
+   ],
+   "palettes": [
+    "neutral",
+    "soft"
+   ],
+   "minTiers": 1,
+   "maxTiers": 3,
+   "blurb": ""
+  },
+  {
+   "handle": "mauve-cymbidium-orchid-sugar-flower",
+   "title": "Mauve Cymbidium Orchid",
+   "price": 60,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/mauve_orchid_gumpaste_flower.jpg?v=1772031976",
+   "styles": [
+    "Minimal",
+    "Focal Point"
+   ],
+   "palettes": [
+    "soft",
+    "bold"
+   ],
+   "minTiers": 1,
+   "maxTiers": 3,
+   "blurb": ""
+  },
+  {
+   "handle": "plum-purple-hydrangea-inflorescence-sugar-flower",
+   "title": "Plum Purple Hydrangea",
+   "price": 30,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/plumhydrangea1.png?v=1777408088",
+   "styles": [
+    "Minimal",
+    "Scattered"
+   ],
+   "palettes": [
+    "bold"
+   ],
+   "minTiers": 1,
+   "maxTiers": 2,
+   "blurb": ""
+  },
+  {
+   "handle": "light-blue-hydrangea-inflorescence-sugar-flower",
+   "title": "Light Blue Hydrangea",
+   "price": 30,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/Light_blue_hydrangea_sugar_flower_ready_to_ship_wedding_cake_topper.png?v=1766268490",
+   "styles": [
+    "Minimal",
+    "Scattered"
+   ],
+   "palettes": [
+    "soft"
+   ],
+   "minTiers": 1,
+   "maxTiers": 2,
+   "blurb": ""
+  },
+  {
+   "handle": "hot-pink-hibiscus-sugar-flower",
+   "title": "Hot Pink Hibiscus",
+   "price": 48,
+   "image": "https://cdn.shopify.com/s/files/1/0711/9588/5762/files/AD458B63-3A92-4784-8E81-ED6BCEFE52CA.jpg?v=1772285116",
+   "styles": [
+    "Minimal",
+    "Focal Point"
+   ],
+   "palettes": [
+    "bright"
+   ],
+   "minTiers": 1,
+   "maxTiers": 2,
+   "blurb": ""
+  }
+ ]
+}

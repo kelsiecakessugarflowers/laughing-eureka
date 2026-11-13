@@ -64,6 +64,19 @@ footer a{color:var(--muted)}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 [hidden]{display:none!important}
+/* Date and style questions */
+.datebox{display:grid;gap:10px;max-width:360px;margin:0 auto}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (min-width:560px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{padding:0;text-align:center;display:flex;flex-direction:column;background:var(--card)}
+.tile img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.tile span{padding:8px 6px;font-size:14px}
+.tile.on,.tile:hover{border-color:var(--accent);background:var(--soft)}
+/* The specific pick */
+.pick .pickimg{width:100%;max-height:420px;object-fit:contain;display:block;background:var(--kc-white);border:1px solid var(--line);margin-bottom:10px}
+.pick .pickimg.wide{aspect-ratio:40/23;max-height:none}
+.pprice{font-size:20px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.pprice s{color:var(--muted);font-weight:400;margin-right:6px}
 </style>
 </head>
 <body>
