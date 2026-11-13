@@ -131,12 +131,13 @@ function customPackage() {
 }
 // Ready to Ship: the design in rts-picks.json that best matches style, color palette and tiers
 function rtsPick() {
-  const style = answers.style?.value || '', palette = answers.palette?.value, tiers = parseInt(answers.size?.value || '0');
-  const score = d => ((d.styles || []).includes(style) ? 4 : style === '' ? 1 : -9)
-    + ((d.palettes || []).includes(palette) ? 3 : palette === 'unsure' ? 1 : 0)
-    + (tiers >= (d.minTiers || 1) && tiers <= (d.maxTiers || 9) ? 2 : -2);
-  const best = [...RTS].map((d, i) => ({d, s: score(d), i})).sort((a, b) => b.s - a.s || a.i - b.i)[0];
-  return best && best.s > 0 ? best.d : null;
+  // A design shows only if it matches every answer the visitor gave (style, palette, tier count).
+  // "Not sure yet" / "unsure" answers don't filter. Ties go to the order in rts-picks.json.
+  const style = answers.style?.value || '', palette = answers.palette?.value || 'unsure', tiers = parseInt(answers.size?.value || '0');
+  const fits = d => (!style || (d.styles || []).includes(style))
+    && (palette === 'unsure' || (d.palettes || []).includes(palette))
+    && (!tiers || (tiers >= (d.minTiers || 1) && tiers <= (d.maxTiers || 9)));
+  return RTS.find(fits) || null;
 }
 
 // ---- Screens ----
